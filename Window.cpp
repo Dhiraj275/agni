@@ -1,5 +1,10 @@
 #include "Window.h"
 #include "Resource.h"
+#include  <string>
+//testing
+void Window::SetTitle(const std::string & title) noexcept {
+    SetWindowTextA(hwnd, title.c_str());
+}
 
 Window::WindowClass Window::WindowClass::wndClass;
 Window::WindowClass::WindowClass() noexcept
@@ -86,13 +91,14 @@ LRESULT WINAPI Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
+    //testing
     switch (msg)
     {
     case WM_CLOSE:
         PostQuitMessage(0);
         return 0;
-    
-     //keyboard
+
+        //keyboard
     case WM_SYSKEYDOWN:
     case WM_KEYDOWN:
         if (!(lParam & 0x40000000) || kbd.AutorepeatIsEnabled()) // filter autorepeat
@@ -110,7 +116,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         kbd.ClearState();
         break;
 
-    //mouse messages
+        //mouse messages
     case WM_MOUSEMOVE: {
         const POINTS p = MAKEPOINTS(lParam);
         mouse.OnMouseMove(p.x, p.y);
@@ -137,15 +143,19 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         break;
     }
     case WM_MOUSEWHEEL: {
+
+
         const POINTS p = MAKEPOINTS(lParam);
         if (GET_WHEEL_DELTA_WPARAM(wParam) > 0) {
-
+            mouse.OnWheelUp(p.x, p.y);
         }
-        else if(GET_WHEEL_DELTA_WPARAM(wParam) < 0){
-            
+        else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0) {
+            mouse.OnWheelDown(p.x, p.y);
         }
         break;
     }
     }
+
+   
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }

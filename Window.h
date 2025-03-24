@@ -28,6 +28,8 @@ public:
 public:
 	Keyboard kbd;
 	Mouse mouse;
+	//testing
+	void SetTitle(const std::string& title) noexcept;
 private:
     static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
     static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
@@ -37,6 +39,9 @@ private:
     HWND hwnd;
     std::wstring title;
     int width, height;
+
+	
+
 };
 
 #endif // WINDOW_H
