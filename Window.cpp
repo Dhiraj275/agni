@@ -1,10 +1,7 @@
 #include "Window.h"
 #include "Resource.h"
 #include  <string>
-//testing
-void Window::SetTitle(const std::string & title) noexcept {
-    SetWindowTextA(hwnd, title.c_str());
-}
+
 
 Window::WindowClass Window::WindowClass::wndClass;
 Window::WindowClass::WindowClass() noexcept
