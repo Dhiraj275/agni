@@ -1,6 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
-
+#include <iostream>
+#include <optional>
 #include <windows.h>
 #include <string>
 #include "Keyboard.h"
@@ -11,6 +12,8 @@ public:
     Window(int width, int height, std::wstring title);
     ~Window();
     HWND GetHandle() const { return hwnd; }  // Get window handle
+	static std::optional<int> ProcessMessage();
+public:
 	class WindowClass
 	{
 	public:
@@ -25,7 +28,6 @@ public:
 		static WindowClass wndClass;
 		HINSTANCE hInst;
 	};
-public:
 	Keyboard kbd;
 	Mouse mouse;
 private:

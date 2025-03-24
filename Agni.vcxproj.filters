@@ -39,6 +39,12 @@
     <ClInclude Include="Agni.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AgniTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp">
@@ -51,6 +57,12 @@
       <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="Agni.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AgniTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

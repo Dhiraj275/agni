@@ -1,6 +1,8 @@
+#include <iostream>
+#include <optional>
+#include  <string>
 #include "Window.h"
 #include "Resource.h"
-#include  <string>
 
 
 Window::WindowClass Window::WindowClass::wndClass;
@@ -155,4 +157,19 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 
    
     return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+std::optional<int> Window::ProcessMessage() {
+    MSG msg;
+    while ((PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) > 0)
+    {
+        if (msg.message == WM_QUIT) {
+            return msg.wParam;
+        }
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+
+    }
+
+    return {};
 }
