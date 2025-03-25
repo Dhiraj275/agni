@@ -45,20 +45,26 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 Window::Window(int width, int height, std::wstring title)
     :width(width), height(height), title(title) {
 
-    hwnd = CreateWindowEx(0, Window::WindowClass::GetName(), title.c_str(),
+    hWnd = CreateWindowEx(0, Window::WindowClass::GetName(), title.c_str(),
         WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height,
         nullptr, nullptr, WindowClass::GetInstance(), this);
 
-    if (!hwnd) {
+    if (!hWnd) {
         MessageBox(nullptr, L"Window Creation Failed!", L"Error", MB_OK);
         exit(-1);
     }
 
-    ShowWindow(hwnd, SW_SHOWDEFAULT);
+    ShowWindow(hWnd, SW_SHOWDEFAULT);
+    pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 Window::~Window() {
-    DestroyWindow(hwnd);
+    DestroyWindow(hWnd);
+}
+
+Graphics& Window::Gfx() const
+{
+    return *pGfx;
 }
 
 LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
