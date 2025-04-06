@@ -2,11 +2,22 @@
 #include <iostream>
 #include <exception>
 #include <string>
-
 #pragma comment(lib, "d3d11.lib")
+
+#include <string>
+
+
 
 Graphics::Graphics(HWND hWnd)
 {
+	UINT createDeviceFlags = 0;
+
+	#ifdef _DEBUG
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	#endif
+
+
+
 	DXGI_SWAP_CHAIN_DESC sd = {};
 	sd.BufferDesc.Width = 0;
 	sd.BufferDesc.Height= 0;
@@ -30,7 +41,7 @@ Graphics::Graphics(HWND hWnd)
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
-		0,
+		createDeviceFlags,
 		nullptr,
 		0,
 		D3D11_SDK_VERSION,
@@ -40,7 +51,6 @@ Graphics::Graphics(HWND hWnd)
 		nullptr,
 		&pContext
 	);
-	
 	// gain access to texture subresource in swap chain (back buffer)
 	ID3D11Resource* pBackBuffer = nullptr;
 	pSwap->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));

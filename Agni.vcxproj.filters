@@ -19,6 +19,9 @@
     <Filter Include="Graphics">
       <UniqueIdentifier>{c00013cd-6624-48ec-9200-d531e3252e20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Excepton">
+      <UniqueIdentifier>{a69f1d0a-594c-4231-9b20-41c58de8a1aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -51,6 +54,9 @@
     <ClInclude Include="Graphics.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="AgniException.h">
+      <Filter>Excepton</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp">
@@ -73,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="Graphics.cpp">
       <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="AgniException.cpp">
+      <Filter>Excepton</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

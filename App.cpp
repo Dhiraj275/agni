@@ -22,7 +22,7 @@ int App::Go()
 
 void App::DoFrame()
 {
-	//const float c = sin(timer.Peek()) / 2.0f + 0.5f;
-	//window.Gfx().ClearBuffer(c, c, 1.0f);
+	const float c = sin(timer.Peek()) / 2.0f + 0.5f;
+	window.Gfx().ClearBuffer(0.5f, c, c);
 	window.Gfx().EndFrame();
 } 

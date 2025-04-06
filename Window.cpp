@@ -1,6 +1,8 @@
 #include <iostream>
 #include <optional>
 #include  <string>
+#include  <sstream>
+
 #include "Window.h"
 #include "Resource.h"
 
@@ -44,18 +46,26 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 
 Window::Window(int width, int height, std::wstring title)
     :width(width), height(height), title(title) {
+    try {
 
-    hWnd = CreateWindowEx(0, Window::WindowClass::GetName(), title.c_str(),
-        WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height,
-        nullptr, nullptr, WindowClass::GetInstance(), this);
+        hWnd = CreateWindowEx(0, Window::WindowClass::GetName(), title.c_str(),
+            WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height,
+            nullptr, nullptr, WindowClass::GetInstance(), this);
 
-    if (!hWnd) {
-        MessageBox(nullptr, L"Window Creation Failed!", L"Error", MB_OK);
-        exit(-1);
+        ShowWindow(hWnd, SW_SHOWDEFAULT);
+        pGfx = std::make_unique<Graphics>(hWnd);
+        throw AGWND_LAST_EXCEPT();
     }
+    catch (const AgniException& e) {
+        MessageBoxA(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
+    }
+    catch (const std::exception& e) {
+        MessageBoxA(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONEXCLAMATION);
+    }
+    catch (...) {
+        MessageBoxA(nullptr, "No details available", "Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
 
-    ShowWindow(hWnd, SW_SHOWDEFAULT);
-    pGfx = std::make_unique<Graphics>(hWnd);
+    }
 }
 
 Window::~Window() {
@@ -178,4 +188,62 @@ std::optional<int> Window::ProcessMessage() {
     }
 
     return {};
+}
+
+//exception handling
+Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept
+:
+    AgniException(line, file),
+    hr(hr)
+{
+    
+}
+
+const char* Window::Exception::what() const noexcept
+{
+    std::ostringstream oss;
+    oss << GetType() << std::endl
+        << "[Error Code] " << GetErrorCode() << std::endl
+        << "[Description] " << GetErrorString() << std::endl
+        << GetOriginString();
+    whatBuffer = oss.str();
+    return whatBuffer.c_str();
+}
+
+const char* Window::Exception::GetType() const noexcept
+{
+    return "Agni Window Exception";
+}
+
+
+std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
+{
+    char* pMsgBuf = nullptr;
+    // windows will allocate memory for err string and make our pointer point to it
+    DWORD nMsgLen = FormatMessageA(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        reinterpret_cast<LPSTR>(&pMsgBuf), 0, nullptr
+    );
+    // 0 string length returned indicates a failure
+    if (nMsgLen == 0)
+    {
+        return "Unidentified error code";
+    }
+    // copy error string from windows-allocated buffer to std::string
+    std::string errorString = pMsgBuf;
+    // free windows buffer
+    LocalFree(pMsgBuf);
+    return errorString;
+}
+
+HRESULT Window::Exception::GetErrorCode() const noexcept
+{
+    return hr;
+}
+
+std::string Window::Exception::GetErrorString() const noexcept
+{
+    return TranslateErrorCode(hr);
 }
