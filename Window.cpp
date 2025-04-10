@@ -54,7 +54,6 @@ Window::Window(int width, int height, std::wstring title)
 
         ShowWindow(hWnd, SW_SHOWDEFAULT);
         pGfx = std::make_unique<Graphics>(hWnd);
-        throw AGWND_LAST_EXCEPT();
     }
     catch (const AgniException& e) {
         MessageBoxA(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);

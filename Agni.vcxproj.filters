@@ -22,6 +22,9 @@
     <Filter Include="Excepton">
       <UniqueIdentifier>{a69f1d0a-594c-4231-9b20-41c58de8a1aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DXGI Info Manager">
+      <UniqueIdentifier>{2fd96434-1129-4300-9712-6cf20ad8a713}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -57,6 +60,9 @@
     <ClInclude Include="AgniException.h">
       <Filter>Excepton</Filter>
     </ClInclude>
+    <ClInclude Include="DxgiInfoManager.h">
+      <Filter>DXGI Info Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp">
@@ -82,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="AgniException.cpp">
       <Filter>Excepton</Filter>
+    </ClCompile>
+    <ClCompile Include="DxgiInfoManager.cpp">
+      <Filter>DXGI Info Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
