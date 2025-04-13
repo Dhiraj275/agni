@@ -46,25 +46,12 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 
 Window::Window(int width, int height, std::wstring title)
     :width(width), height(height), title(title) {
-    try {
-
         hWnd = CreateWindowEx(0, Window::WindowClass::GetName(), title.c_str(),
             WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height,
             nullptr, nullptr, WindowClass::GetInstance(), this);
 
         ShowWindow(hWnd, SW_SHOWDEFAULT);
-        pGfx = std::make_unique<Graphics>(hWnd);
-    }
-    catch (const AgniException& e) {
-        MessageBoxA(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
-    }
-    catch (const std::exception& e) {
-        MessageBoxA(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONEXCLAMATION);
-    }
-    catch (...) {
-        MessageBoxA(nullptr, "No details available", "Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
-
-    }
+        pGfx = std::make_unique<Graphics>(hWnd);   
 }
 
 Window::~Window() {

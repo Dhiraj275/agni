@@ -2,8 +2,13 @@
 #include <iostream>
 #include <exception>
 #include <sstream>
-#pragma comment(lib, "d3d11.lib")
+#include <d3dcompiler.h>
 
+
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib,"D3DCompiler.lib")
+
+namespace wrl = Microsoft::WRL;
 
 // graphics exception checking/throwing macros (some with dxgi infos)
 #define GFX_EXCEPT_NOINFO(hr) Graphics::HrException( __LINE__,__FILE__,(hr) )
@@ -12,11 +17,14 @@
 #ifndef NDEBUG
 #define GFX_EXCEPT(hr) Graphics::HrException( __LINE__,__FILE__,(hr),infoManager.GetMessages() )
 #define GFX_THROW_INFO(hrcall) infoManager.Set(); if( FAILED( hr = (hrcall) ) ) throw GFX_EXCEPT(hr)
+#define GFX_THROW_INFO_ONLY(call) infoManager.Set(); (call); {auto v = infoManager.GetMessages(); if(!v.empty()) {throw Graphics::InfoException( __LINE__,__FILE__,v);}}
 #define GFX_DEVICE_REMOVED_EXCEPT(hr) Graphics::DeviceRemovedException( __LINE__,__FILE__,(hr),infoManager.GetMessages() )
+
 #else
 #define GFX_EXCEPT(hr) Graphics::HrException( __LINE__,__FILE__,(hr) )
 #define GFX_THROW_INFO(hrcall) GFX_THROW_NOINFO(hrcall)
 #define GFX_DEVICE_REMOVED_EXCEPT(hr) Graphics::DeviceRemovedException( __LINE__,__FILE__,(hr) )
+#define GFX_THROW_INFO_ONLY(call) (call)
 #endif
 
 
@@ -62,42 +70,141 @@ Graphics::Graphics(HWND hWnd)
 		&pContext
 	));
 	// gain access to texture subresource in swap chain (back buffer)
-	ID3D11Resource* pBackBuffer = nullptr;
-	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer)));
+
+	wrl::ComPtr<ID3D11Resource> pBackBuffer;
+	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
 	pDevice->CreateRenderTargetView(
-		pBackBuffer,
+		pBackBuffer.Get(),
 		nullptr,
 		&pTarget
 	);
-	pBackBuffer->Release();
 }
 
-Graphics::~Graphics()
+
+
+
+void Graphics::DrawTestTriangle()
 {
-	if (pTarget != nullptr)
+	namespace wrl = Microsoft::WRL;
+	
+	HRESULT hr;
+
+	struct Vertex
 	{
-		pTarget->Release();
-	}
-	if (pDevice != nullptr) {
-		pDevice->Release();
-	}
-	if (pSwap != nullptr) {
-		pSwap->Release();
-	}
-	if (pContext != nullptr) {
-		pContext->Release();
-	}
+		float x;
+		float y;
+		float r;
+		float g;
+		float b;
+
+	};
+
+	//vertex buffer 
+	const Vertex vertices[] =
+	{
+		{ 0.0f,0.5f, 1.0f,0.0f,0.0f },
+		{ 0.5f,-0.5f, 0.0f,1.0f,0.0f },
+		{ -0.5f,-0.5f, 0.0f,0.0f,1.0f },
+	};
+	
+	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
+	
+	//vertex buffer description
+	D3D11_BUFFER_DESC bd = {};
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.CPUAccessFlags = 0u;
+	bd.MiscFlags = 0u;
+	bd.ByteWidth = sizeof( vertices );
+	bd.StructureByteStride = sizeof( Vertex );
+	//vertex buffer sub resource
+	D3D11_SUBRESOURCE_DATA sd = {};
+	sd.pSysMem = vertices;
+	
+
+	GFX_THROW_INFO(pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
+	const UINT stride = sizeof(Vertex);
+	const UINT offset = 0u;
+	pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+	
+	//blob
+	wrl::ComPtr<ID3DBlob> pBlob;
+	//vertex shader
+	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
+	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", &pBlob));
+	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
+	//binding vertex shader to the pipe line
+	pContext->PSSetShader(pPixelShader.Get(), 0, 0);
+
+	//vertex shader
+	wrl::ComPtr<ID3D11VertexShader> pVertexShader;
+	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", &pBlob));
+	GFX_THROW_INFO(pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(),nullptr, &pVertexShader ));
+	//binding vertex shader to the pipe line
+	pContext->VSSetShader(pVertexShader.Get(), 0, 0);
+
+
+	//input layout
+	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
+	const D3D11_INPUT_ELEMENT_DESC ied[] = {
+		{"Position",0, DXGI_FORMAT_R32G32_FLOAT, 0,0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"Color",0, DXGI_FORMAT_R32G32B32_FLOAT, 0,8u, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+	GFX_THROW_INFO(pDevice->CreateInputLayout(
+		ied, (UINT)std::size(ied),
+		pBlob->GetBufferPointer(),
+		pBlob->GetBufferSize(),
+		&pInputLayout
+	));
+
+	pContext->IASetInputLayout(pInputLayout.Get());
+
+
+	//render target
+	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
+
+	//set premitive topology to TRIANGLELIST
+	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+	//view port desc
+	D3D11_VIEWPORT vp;
+	vp.Height = 720;
+	vp.Width= 1280;
+	vp.MinDepth= 0;
+	vp.MaxDepth= 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+
+	pContext->RSSetViewports(1u, &vp);
+
+	GFX_THROW_INFO_ONLY(pContext->Draw((UINT)std::size(vertices), 0u));
 }
+
 
 void Graphics::EndFrame()
 {
-		pSwap->Present(1u, 0u);
+	HRESULT hr;
+#ifndef NDEBUG
+	infoManager.Set();
+#endif
+	if (FAILED(hr = pSwap->Present(1u, 0u)))
+	{
+		if (hr == DXGI_ERROR_DEVICE_REMOVED)
+		{
+			throw GFX_DEVICE_REMOVED_EXCEPT(pDevice->GetDeviceRemovedReason());
+		}
+		else
+		{
+			throw GFX_EXCEPT(hr);
+		}
+	}
 }
 
 void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 {
 	const float color[] = { red,green,blue,1.0f };
-	pContext->ClearRenderTargetView(pTarget, color);
+	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
 
 
@@ -120,7 +227,6 @@ Graphics::HrException::HrException(int line, const char* file, HRESULT hr, std::
 		info.pop_back();
 	}
 }
-
 
 
 const char* Graphics::HrException::what() const noexcept
@@ -174,8 +280,43 @@ std::string Graphics::HrException::GetErrorInfo() const noexcept
 	return info;
 }
 
+const char* Graphics::DeviceRemovedException::GetType() const noexcept
+{
+	return "Agni Graphics Device Removed Exception";
+}
 
-//const char* Graphics::DeviceRemovedException::GetType() const noexcept
-//{
-//	return "Chili Graphics Exception [Device Removed] (DXGI_ERROR_DEVICE_REMOVED)";
-//}
+//info exception
+Graphics::InfoException::InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept
+	:
+	Exception(line, file)
+{
+	// join all info messages with newlines into single string
+	for (const auto& m : infoMsgs)
+	{
+		info += m;
+		info.push_back('\n');
+	}
+	// remove final newline if exists
+	if (!info.empty())
+	{
+		info.pop_back();
+	}
+}
+std::string Graphics::InfoException::GetErrorInfo() const noexcept
+{
+	return info;
+}
+
+const char* Graphics::InfoException::what() const noexcept
+{
+	std::ostringstream oss;
+	oss << GetType() << std::endl
+		<< "[Error Info]\n" << GetErrorInfo() << std::endl << std::endl;
+	oss << GetOriginString();
+	whatBuffer = oss.str();
+	return whatBuffer.c_str();
+}
+const char* Graphics::InfoException::GetType() const noexcept
+{
+	return "Agni Graphics Info Exception";
+}
