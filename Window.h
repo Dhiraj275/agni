@@ -22,7 +22,10 @@ public:
     ~Window();
 	HWND GetHandle() const { return hWnd; }  // Get window handle
 	static std::optional<int> ProcessMessage();
-
+	void SetTitle(std::string title)  {
+		std::wstring wtitle(title.begin(), title.end());
+		SetWindowTextW(hWnd, wtitle.c_str());
+	}
 private:
 	class WindowClass
 	{
