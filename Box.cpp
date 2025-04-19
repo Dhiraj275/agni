@@ -1,7 +1,14 @@
 #include "Box.h"
 #include "TransformCBuf.h"
 #include "GraphicsThrowMacros.h"
-Box::Box(Graphics& gfx)
+#include <cmath>
+
+Box::Box(Graphics& gfx, float x, float y, float z, float speed, float angle):
+	x(x),
+	y(y),
+	z(z),
+	speed(speed),
+	angle(angle)
 {
 	struct Vertex
 	{
@@ -89,12 +96,16 @@ Box::Box(Graphics& gfx)
 void Box::Update(float dt) noexcept
 {
 	angle +=1.0f*dt;
+	x = std::sinf(angle) * speed;
+	y = std::cosf(angle) * speed;
+	z = std::cosf(angle) * speed;
 }
 
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
 	return
 		DirectX::XMMatrixRotationY(angle) *
-		DirectX::XMMatrixRotationZ(angle) *
-		DirectX::XMMatrixTranslation(0, 0, 8.0f);
+		/*DirectX::XMMatrixRotationZ(angle) **/
+		DirectX::XMMatrixTranslation(x,y,z) *
+		DirectX::XMMatrixTranslation(0, 0, 20.0f);
 }

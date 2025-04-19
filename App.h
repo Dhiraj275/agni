@@ -12,7 +12,7 @@ private:
 private:
 	Window window;
 	AgniTimer timer;
-	std::unique_ptr<class Box > box;
+	std::vector<std::unique_ptr<class Box >> boxes ;
 ;};
 
 
