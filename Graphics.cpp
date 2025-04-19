@@ -3,7 +3,6 @@
 #include <exception>
 #include <sstream>
 #include <d3dcompiler.h>
-#include <DirectXMath.h>
 #include "GraphicsThrowMacros.h"
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
@@ -15,8 +14,8 @@ namespace dx = DirectX;
 Graphics::Graphics(HWND hWnd)
 {
 	DXGI_SWAP_CHAIN_DESC sd = {};
-	sd.BufferDesc.Width = 0;
-	sd.BufferDesc.Height= 0;
+	sd.BufferDesc.Width = 1280u;
+	sd.BufferDesc.Height= 720u;
 	sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	sd.BufferDesc.RefreshRate.Numerator = 0;
 	sd.BufferDesc.RefreshRate.Denominator= 0;
@@ -96,7 +95,17 @@ Graphics::Graphics(HWND hWnd)
 		pDepthStencil.Get(), &descDSV, &pDSV
 	));
 
-	// bind depth stensil view to OM
+	// configure viewport
+	D3D11_VIEWPORT vp;
+	vp.Width = 1280.0f;
+	vp.Height = 720.0f;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0.0f;
+	vp.TopLeftY = 0.0f;
+	pContext->RSSetViewports(1u, &vp);
+
+	
 }
 
 
@@ -104,220 +113,27 @@ Graphics::Graphics(HWND hWnd)
 
 void Graphics::DrawTestTriangle(float angle, float x, float y)
 {
-	namespace wrl = Microsoft::WRL;
-	float aspect = 1280.0f / 720.0f;
-	HRESULT hr;
-	//struct for vertex buffer
-	struct Vertex
-	{
-		struct {
-		float x;
-		float y;
-		float z;
-		} pos;		
-	};
-
-	//vertex buffer for cube
 	
-	const Vertex vertices[] =
-	{
-		{-1.0f,		-1.0f,		-1.0f	},
-		{1.0f,		-1.0f,		-1.0f	},
-		{-1.0f,		1.0f,		-1.0f	},
-		{1.0f,		1.0f,		-1.0f	},
-
-		{-1.0f,		-1.0f,		1.0f	},
-		{1.0f,		-1.0f,		1.0f	},
-		{-1.0f,		1.0f,		1.0f	},
-		{1.0f,		1.0f,		1.0f	},
-
-	};
-	
-
-	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
-	
-	//vertex buffer description
-	D3D11_BUFFER_DESC bd = {};
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.CPUAccessFlags = 0u;
-	bd.MiscFlags = 0u;
-	bd.ByteWidth = sizeof( vertices );
-	bd.StructureByteStride = sizeof( Vertex );
-	//vertex buffer sub resource
-	D3D11_SUBRESOURCE_DATA sd = {};
-	sd.pSysMem = vertices;
-	
-
-	GFX_THROW_INFO(pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
-	const UINT stride = sizeof(Vertex);
-	const UINT offset = 0u;
-	pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
-	
-	//blob
-	wrl::ComPtr<ID3DBlob> pBlob;
-	//vertex shader
-	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", &pBlob));
-	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
-	//binding vertex shader to the pipe line
-	pContext->PSSetShader(pPixelShader.Get(), 0, 0);
-
-	//vertex shader
-	wrl::ComPtr<ID3D11VertexShader> pVertexShader;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", &pBlob));
-	GFX_THROW_INFO(pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(),nullptr, &pVertexShader ));
-	//binding vertex shader to the pipe line
-	pContext->VSSetShader(pVertexShader.Get(), 0, 0);
-
-	//index buffer
-	const unsigned short indices[] = 
-	{
-		0,2,1, 2,3,1,
-		1,3,5, 3,7,5,
-		2,6,3, 3,6,7,
-		4,5,7, 4,7,6,
-		0,4,2, 2,4,6,
-		0,1,4, 1,5,4
-	};
-
-	wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
-	D3D11_BUFFER_DESC ibd = {};
-	ibd.ByteWidth = sizeof(indices);
-	ibd.Usage = D3D11_USAGE_DEFAULT;
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.CPUAccessFlags = 0u;
-	ibd.MiscFlags = 0u;
-	ibd.StructureByteStride = sizeof(unsigned short);
-
-	D3D11_SUBRESOURCE_DATA isd;
-	isd.pSysMem = indices;
-
-	GFX_THROW_INFO(pDevice->CreateBuffer(&ibd, &isd, &pIndexBuffer));
-	
-	//binding index buffer
-	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
-
-
-
-
-	//constant buffer for transformation matrix
-	//constant buffer struct
-	struct ConstantBuffer
-	{
-		dx::XMMATRIX transform;
-	};
-
-	//transformation matrix
-	ConstantBuffer cb = {
-	{
-			dx::XMMatrixTranspose(
-				dx::XMMatrixRotationY(angle)*
-				dx::XMMatrixRotationX(angle)*
-
-				dx::XMMatrixTranslation(x,y,8.0f)*
-				dx::XMMatrixPerspectiveLH(1.0f,9.0f / 16.0f,0.5f,10.0f)
-			)
-	}
-	};
-
-
-	wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
-	D3D11_BUFFER_DESC cbd = {};
-	cbd.ByteWidth = sizeof(cb);
-	cbd.Usage = D3D11_USAGE_DYNAMIC;
-	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cbd.MiscFlags = 0u;
-	cbd.StructureByteStride = 0u;
-	D3D11_SUBRESOURCE_DATA csd = {};
-	csd.pSysMem = &cb;
-	//binding constant buffer
-	GFX_THROW_INFO(pDevice->CreateBuffer(&cbd, &csd, &pConstantBuffer));
-	pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
-
-
-	//constant buffer for face color 
-	//constant buffer struct
-	struct ConstantBuffer2
-	{
-		struct{
-			float r;
-			float g;
-			float b;
-			float a;
-		}face_color[6];
-	};
-
-	//transformation matrix
-	ConstantBuffer2 cb2 = {
-		{
-				{1.0f, 0.34f, 0.13f},  // Deep Orange
-				{0.13f, 0.59f, 0.95f}, // Bright Blue
-				{0.30f, 0.69f, 0.31f}, // Vivid Green
-				{0.61f, 0.15f, 0.69f}, // Purple
-				{1.0f, 0.92f, 0.23f},  // Yellow
-				{0.96f, 0.26f, 0.21f}  // Red
-		}
-	};
-
-
-	wrl::ComPtr<ID3D11Buffer> pConstantBuffer2;
-	D3D11_BUFFER_DESC cbd2 = {};
-	cbd2.ByteWidth = sizeof(cb2);
-	cbd2.Usage = D3D11_USAGE_DEFAULT;
-	cbd2.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd2.CPUAccessFlags = 0u;
-	cbd2.MiscFlags = 0u;
-	cbd2.StructureByteStride = 0u;
-	D3D11_SUBRESOURCE_DATA csd2 = {};
-	csd2.pSysMem = &cb2;
-	//binding constant buffer to the pixel shader
-	GFX_THROW_INFO(pDevice->CreateBuffer(&cbd2, &csd2, &pConstantBuffer2));
-	pContext->PSSetConstantBuffers(0u, 1u, pConstantBuffer2.GetAddressOf());
-
-
-
-	//input layout
-	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
-	const D3D11_INPUT_ELEMENT_DESC ied[] = {
-		{"Position",0, DXGI_FORMAT_R32G32B32_FLOAT, 0,0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
-	GFX_THROW_INFO(pDevice->CreateInputLayout(
-		ied, (UINT)std::size(ied),
-		pBlob->GetBufferPointer(),
-		pBlob->GetBufferSize(),
-		&pInputLayout
-	));
-
-	pContext->IASetInputLayout(pInputLayout.Get());
-
-	
-	//set premitive topology to TRIANGLELIST
-	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-
-	//view port desc
-	D3D11_VIEWPORT vp;
-	vp.Width= 1280;
-	vp.Height = 720;
-	vp.MinDepth= 0;
-	vp.MaxDepth= 1;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-
-	pContext->RSSetViewports(1u, &vp);
-
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
-
-
-	GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u));
 }
 
+void Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG)
+{
+	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
+}
+void Graphics::SetProjection(DirectX::FXMMATRIX proj) noexcept
+{
+	projection = proj;
+}
+
+DirectX::XMMATRIX Graphics::GetProjection() const noexcept
+{
+	return projection;
+}
 
 void Graphics::EndFrame()
 {
 	HRESULT hr;
+
 #ifndef NDEBUG
 	infoManager.Set();
 #endif
@@ -339,6 +155,7 @@ void Graphics::EndFrame()
 void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 {
 	const float color[] = { red,green,blue,1.0f };
+	GFX_THROW_INFO_ONLY(pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get()));
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
@@ -415,6 +232,7 @@ std::string Graphics::HrException::GetErrorInfo() const noexcept
 {
 	return info;
 }
+
 
 const char* Graphics::DeviceRemovedException::GetType() const noexcept
 {

@@ -2,10 +2,15 @@
 #include <iomanip>
 #include <sstream>
 #include "AgniTimer.h"
+#include "Bindable.h"
+#include "VertexShader.h"
+#include "Box.h"
 App::App() :
 	window(1280, 720, L"Agni Engine")
 {
-
+	window.Gfx().ClearBuffer(0, 0, 0);
+	window.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 40.0f));
+	this->box = std::make_unique<Box>(window.Gfx());
 }
 
 int App::Go() 
@@ -22,21 +27,10 @@ int App::Go()
 
 void App::DoFrame()
 {
-	const float c = sin(timer.Peek()) / 2.0f + 0.5f;
+	const float dt = timer.Mark();
 	window.Gfx().ClearBuffer(0, 0, 0);
-
-	window.Gfx().DrawTestTriangle(timer.Peek(),		-2.0f,		0.0f);
-	window.Gfx().DrawTestTriangle(timer.Peek(),			0.0f,		0.0f);
-	window.Gfx().DrawTestTriangle(timer.Peek(),		2.0f,		0.0f);
-
-	window.Gfx().DrawTestTriangle(timer.Peek(),		-2.0f,			-2.0f);
-	window.Gfx().DrawTestTriangle(timer.Peek(),	0.0f,			-2.0f);
-	window.Gfx().DrawTestTriangle(timer.Peek(),		2.0f,			-2.0f);
-
-	window.Gfx().DrawTestTriangle(timer.Peek(),		-2.0f,			2.0f);
-	window.Gfx().DrawTestTriangle(timer.Peek(),	0.0f,			2.0f);
-	window.Gfx().DrawTestTriangle(timer.Peek(),		2.0f,			2.0f);
-
+	box->Update(dt);
+	box->Draw(window.Gfx());
 
 	window.Gfx().EndFrame();
 } 

@@ -1,13 +1,19 @@
 #pragma once
+#include "AgniException.h"
+#include "DxgiInfoManager.h"
 #include <Windows.h>
 #include <d3d11.h>
-#include "AgniException.h"
 #include <vector>
-#include "DxgiInfoManager.h"
 #include <wrl.h>
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
+#include <memory>
+#pragma comment(lib,"D3DCompiler.lib")
+
 
 class Graphics
 {
+	friend class Bindable;
 public:
 	class Exception : public AgniException
 	{
@@ -57,11 +63,15 @@ public:
 	void EndFrame();
 	void DrawTestTriangle(float angle, float x, float y);
 	void ClearBuffer(float red, float green, float blue) noexcept;
+	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
+	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
+	DirectX::XMMATRIX GetProjection() const noexcept;
 private:
+	DirectX::XMMATRIX projection;
 #ifndef NDEBUG
+
 	DxgiInfoManager infoManager;
 #endif
-
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
