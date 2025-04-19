@@ -13,31 +13,58 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Input">
-      <UniqueIdentifier>{ae62c87b-3f48-4e96-972f-ef8422f807de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Graphics">
-      <UniqueIdentifier>{c00013cd-6624-48ec-9200-d531e3252e20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Excepton">
-      <UniqueIdentifier>{a69f1d0a-594c-4231-9b20-41c58de8a1aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DXGI Info Manager">
-      <UniqueIdentifier>{2fd96434-1129-4300-9712-6cf20ad8a713}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shader">
       <UniqueIdentifier>{824ec087-b7db-49f8-af34-745b1028d420}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{c00013cd-6624-48ec-9200-d531e3252e20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DXGI Info Manager">
+      <UniqueIdentifier>{2fd96434-1129-4300-9712-6cf20ad8a713}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Input">
+      <UniqueIdentifier>{ae62c87b-3f48-4e96-972f-ef8422f807de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXGI Info Manager">
+      <UniqueIdentifier>{89cfd641-6016-47a4-8a71-943277bb4a02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{d5882d5e-9146-4524-8127-d56b2af3e4d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Exception">
+      <UniqueIdentifier>{a69f1d0a-594c-4231-9b20-41c58de8a1aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Exception">
+      <UniqueIdentifier>{f87660ba-790b-4b18-af34-07defdae8ea3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{00230141-9c8e-4530-80a3-1407c760d724}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Timer">
+      <UniqueIdentifier>{5eb7a5b9-5744-475f-92fd-496b6d709c45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window">
+      <UniqueIdentifier>{0ee41503-7759-4fe7-804a-71c1bcc0d589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\App">
+      <UniqueIdentifier>{0fb4bc7a-9b4e-4ed7-a6c2-6fd2972e2b44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Timer">
+      <UniqueIdentifier>{b5b1597f-e7e6-4de1-86c7-8de3affde024}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Window">
+      <UniqueIdentifier>{d484bfd1-6a4d-49cd-875a-d657656c0fe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\App">
+      <UniqueIdentifier>{bda43626-95dc-41e5-ac92-dd9779bd9902}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Keyboard.h">
-      <Filter>Input</Filter>
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
@@ -46,54 +73,57 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mouse.h">
-      <Filter>Input</Filter>
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="Agni.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="App.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AgniTimer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics.h">
-      <Filter>Graphics</Filter>
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="AgniException.h">
-      <Filter>Excepton</Filter>
+      <Filter>Header Files\Exception</Filter>
     </ClInclude>
     <ClInclude Include="DxgiInfoManager.h">
-      <Filter>DXGI Info Manager</Filter>
+      <Filter>Header Files\DXGI Info Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="AgniTimer.h">
+      <Filter>Header Files\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>Header Files\App</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Keyboard.cpp">
-      <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Mouse.cpp">
-      <Filter>Input</Filter>
-    </ClCompile>
     <ClCompile Include="Agni.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="App.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files\Window</Filter>
     </ClCompile>
     <ClCompile Include="AgniTimer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>Source Files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="Graphics.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="AgniException.cpp">
-      <Filter>Excepton</Filter>
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="DxgiInfoManager.cpp">
-      <Filter>DXGI Info Manager</Filter>
+      <Filter>Source Files\DXGI Info Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="AgniException.cpp">
+      <Filter>Source Files\Exception</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
