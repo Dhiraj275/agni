@@ -1,6 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "AgniTimer.h"
+#include "Sphere.h"
 #include "Box.h"
 class App
 {
@@ -13,6 +14,7 @@ private:
 	Window window;
 	AgniTimer timer;
 	std::vector<std::unique_ptr<class Box >> boxes ;
+	std::unique_ptr<class Sphere > sphere;
 ;};
 
 
