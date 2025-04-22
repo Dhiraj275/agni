@@ -1,6 +1,6 @@
 #pragma once
-#include "Drawable.h"
-class Box : public Drawable
+#include "DrawableBase.h"
+class Box : public DrawableBase<Box>
 {
 public:
 	Box(Graphics& gfx, float x, float y, float z, float speed, float angle);

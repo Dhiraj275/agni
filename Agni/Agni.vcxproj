@@ -157,6 +157,7 @@
     <ClInclude Include="Box.h" />
     <ClInclude Include="ConstantBuffers.h" />
     <ClInclude Include="Drawable.h" />
+    <ClInclude Include="DrawableBase.h" />
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Graphics.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="Bindable.cpp" />
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Drawable.cpp" />
+    <ClCompile Include="DrawableBase.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
@@ -212,7 +214,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">

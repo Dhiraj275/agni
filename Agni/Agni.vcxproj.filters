@@ -153,6 +153,9 @@
     <ClInclude Include="Sphere.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="DrawableBase.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Agni.cpp">
@@ -215,6 +218,9 @@
     <ClCompile Include="Sphere.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="DrawableBase.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Agni.rc">
@@ -231,7 +237,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">
