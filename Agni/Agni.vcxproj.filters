@@ -232,8 +232,6 @@
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="README.md" />
-    <None Include="PixelShader.cso" />
-    <None Include="VertexShader.cso" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">

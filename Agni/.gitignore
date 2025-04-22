@@ -401,4 +401,4 @@ FodyWeavers.xsd
 
 
 #cso
-Agni/*.cso
+*.cso
