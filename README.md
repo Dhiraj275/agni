@@ -30,7 +30,8 @@ A modular, custom game engine built from scratch using **C++** and **DirectX 11*
   - Framerate-independent updates and delta time  
 - 🖱️ **ImGui Integration**  
   - Add debug UI and real-time tools using Dear ImGui
-
+- 💡 **Lighting System Implementation**  
+  - Add support for directional, point, and ambient lighting
 ---
 
 ## 🛠️ Tech Stack  
