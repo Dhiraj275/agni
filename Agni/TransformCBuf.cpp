@@ -3,6 +3,7 @@ TransformCBuf::TransformCBuf(Graphics& gfx, Drawable & parent)
 	:parent(parent)
 
 {
+	INFOMAN(gfx);
 	//transformation matrix
     matrix = parent.GetTransformXM();
 	D3D11_BUFFER_DESC cbd = {};
@@ -15,13 +16,13 @@ TransformCBuf::TransformCBuf(Graphics& gfx, Drawable & parent)
 	D3D11_SUBRESOURCE_DATA csd = {};
 	csd.pSysMem = &matrix;
 	//binding constant buffer
-	GetDevice(gfx)->CreateBuffer(&cbd, &csd, &pConstantBuffer);
-	//GFX_THROW_INFO();
+	GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&cbd, &csd, &pConstantBuffer));
 }
 
 void TransformCBuf::Bind(Graphics& gfx) noexcept
 {
     
+	//update
 	INFOMAN(gfx);
 	DirectX::XMMATRIX consts = 
 		DirectX::XMMatrixTranspose(
@@ -35,8 +36,9 @@ void TransformCBuf::Bind(Graphics& gfx) noexcept
 	));
 	memcpy(msr.pData, &consts, sizeof(consts));
 	GetContext(gfx)->Unmap(pConstantBuffer.Get(), 0u);
-
+	
+	//bind
     GetContext(gfx)->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
 }
 
-
+Microsoft::WRL::ComPtr<ID3D11Buffer> TransformCBuf::pConstantBuffer;
