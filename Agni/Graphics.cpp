@@ -1,9 +1,12 @@
 #include "Graphics.h"
+#include "GraphicsThrowMacros.h"
+#include "ImGui/imgui_impl_dx11.h"
+#include "ImGui/imgui_impl_win32.h"
 #include <iostream>
 #include <exception>
 #include <sstream>
 #include <d3dcompiler.h>
-#include "GraphicsThrowMacros.h"
+
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
 
@@ -105,17 +108,14 @@ Graphics::Graphics(HWND hWnd)
 	vp.TopLeftY = 0.0f;
 	pContext->RSSetViewports(1u, &vp);
 
-	
+	//imgui 
+	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
 
-
-
-
-void Graphics::DrawTestTriangle(float angle, float x, float y)
+Graphics::~Graphics()
 {
-	
+	ImGui_ImplDX11_Shutdown();
 }
-
 void Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG)
 {
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
@@ -133,7 +133,10 @@ DirectX::XMMATRIX Graphics::GetProjection() const noexcept
 void Graphics::EndFrame()
 {
 	HRESULT hr;
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
+	
 #ifndef NDEBUG
 	infoManager.Set();
 #endif
@@ -148,12 +151,17 @@ void Graphics::EndFrame()
 			throw GFX_EXCEPT(hr);
 		}
 	}
+
 }
 
 
 
-void Graphics::ClearBuffer(float red, float green, float blue) noexcept
+void Graphics::BeginFrame(float red, float green, float blue) noexcept
 {
+	//imgui stuff
+	ImGui_ImplWin32_NewFrame();
+	ImGui_ImplDX11_NewFrame();
+	ImGui::NewFrame();
 	const float color[] = { red,green,blue,1.0f };
 	GFX_THROW_INFO_ONLY(pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get()));
 	pContext->ClearRenderTargetView(pTarget.Get(), color);

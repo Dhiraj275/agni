@@ -2,9 +2,10 @@
 #include <optional>
 #include  <string>
 #include  <sstream>
-
+#include "ImGui/imgui_impl_win32.h"
 #include "Window.h"
 #include "Resource.h"
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
 Window::WindowClass Window::WindowClass::wndClass;
@@ -52,9 +53,11 @@ Window::Window(int width, int height, std::wstring title)
 
         ShowWindow(hWnd, SW_SHOWDEFAULT);
         pGfx = std::make_unique<Graphics>(hWnd);   
+        ImGui_ImplWin32_Init(hWnd);
 }
 
 Window::~Window() {
+    ImGui_ImplWin32_Shutdown();
     DestroyWindow(hWnd);
 }
 
@@ -93,6 +96,10 @@ LRESULT WINAPI Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
     //testing
+    if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
+        return true;
+    }
+
     switch (msg)
     {
     case WM_CLOSE:

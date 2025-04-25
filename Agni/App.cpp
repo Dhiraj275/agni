@@ -7,10 +7,12 @@
 #include "Box.h"
 #include <ctime>
 #include <random>
+#include "ImGui/imgui_impl_dx11.h"
+#include "ImGui/imgui_impl_win32.h"
+
 App::App() :
 	window(1280, 720, L"Agni Engine")
 {
-	window.Gfx().ClearBuffer(0, 0, 0);
 	
 	int count = 800;
 	std::mt19937 rng(static_cast<unsigned int>(std::time(nullptr)));
@@ -50,13 +52,19 @@ int App::Go()
 
 void App::DoFrame()
 {
+	window.Gfx().BeginFrame(0, 0, 0);
 	Graphics& gfx = window.Gfx();
+	
 	const float dt = timer.Mark();
-	window.Gfx().ClearBuffer(0, 0, 0);
 	for (auto& box : boxes)
  	{
  		box->Update(dt);
  		box->Draw(window.Gfx());
  	}
+
+	if (ImGui::Begin("Agni Editor")) {
+		ImGui::Text("Frame Rate: %.1f", ImGui::GetIO().Framerate);
+	}
+	ImGui::End();
 	window.Gfx().EndFrame();
 } 

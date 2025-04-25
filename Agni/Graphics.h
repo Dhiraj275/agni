@@ -1,6 +1,7 @@
 #pragma once
 #include "AgniException.h"
 #include "DxgiInfoManager.h"
+#include "ImGuiManager.h"
 #include <Windows.h>
 #include <d3d11.h>
 #include <vector>
@@ -59,17 +60,16 @@ public:
 	Graphics(HWND hWnd);
 	Graphics(const Graphics&) = delete;
 	Graphics& operator = (const Graphics&) = delete;
-	~Graphics()=default;
+	~Graphics();
 	void EndFrame();
-	void DrawTestTriangle(float angle, float x, float y);
-	void ClearBuffer(float red, float green, float blue) noexcept;
+	void BeginFrame(float red, float green, float blue) noexcept;
 	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
 private:
 	DirectX::XMMATRIX projection;
 #ifndef NDEBUG
-
+	ImGuiManager imGui;
 	DxgiInfoManager infoManager;
 #endif
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
