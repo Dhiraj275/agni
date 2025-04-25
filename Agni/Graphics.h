@@ -66,10 +66,14 @@ public:
 	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
+	void SetCamera(DirectX::FXMMATRIX proj) noexcept;
+	DirectX::XMMATRIX GetCamera() const noexcept;
+
 private:
 	DirectX::XMMATRIX projection;
-#ifndef NDEBUG
+	DirectX::XMMATRIX camera;
 	ImGuiManager imGui;
+#ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;

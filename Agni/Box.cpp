@@ -91,16 +91,14 @@ Box::Box(Graphics& gfx, float x, float y, float z, float speed, float angle):
 void Box::Update(float dt) noexcept
 {
 	angle +=1.0f*dt;
-	x = std::sinf(angle) * speed;
-	y = std::cosf(angle) * speed;
-	z = std::cosf(angle) * speed;
+	y = std::sinf(angle) * speed;
+	z = std::sinf(angle) * speed;
+	x = std::cosf(angle) * speed;
 }
 
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
 	return
 		DirectX::XMMatrixRotationY(angle) *
-		/*DirectX::XMMatrixRotationZ(angle) **/
-		DirectX::XMMatrixTranslation(x,y,z) *
-		DirectX::XMMatrixTranslation(0, 0, 20.0f);
+		DirectX::XMMatrixTranslation(x, y, z);
 }

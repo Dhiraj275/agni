@@ -16,9 +16,9 @@ App::App() :
 	
 	int count = 800;
 	std::mt19937 rng(static_cast<unsigned int>(std::time(nullptr)));
-	std::uniform_real_distribution<float> xDist(-180.0f, 180.0f);     // Random x position
-	std::uniform_real_distribution<float> yDist(-180.0f, 180.0f);     // Random y position
-	std::uniform_real_distribution<float> zDist(-60.0f, 0.0f);      // Random z position
+	std::uniform_real_distribution<float> xDist(-10.0f, 10.0f);     // Random x position
+	std::uniform_real_distribution<float> yDist(-10.0f, 10.0f);     // Random y position
+	std::uniform_real_distribution<float> zDist(0.0f, 200.0f);      // Random z position
 	std::uniform_real_distribution<float> speedDist(6.5f, 200.0f);    // Random speed
 	std::uniform_real_distribution<float> angleDist(0.0f, 6.28f);   // Random angle (0 to 2π)
 
@@ -54,7 +54,7 @@ void App::DoFrame()
 {
 	window.Gfx().BeginFrame(0, 0, 0);
 	Graphics& gfx = window.Gfx();
-	
+	window.Gfx().SetCamera(cam.GetMatrix());
 	const float dt = timer.Mark();
 	for (auto& box : boxes)
  	{
@@ -65,6 +65,8 @@ void App::DoFrame()
 	if (ImGui::Begin("Agni Editor")) {
 		ImGui::Text("Frame Rate: %.1f", ImGui::GetIO().Framerate);
 	}
+
+	cam.SpawnCameraController();
 	ImGui::End();
 	window.Gfx().EndFrame();
 } 

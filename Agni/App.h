@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "AgniTimer.h"
 #include "Sphere.h"
+#include "Camera.h"
 #include "Box.h"
 class App
 {
@@ -12,6 +13,7 @@ private:
 	void DoFrame();
 private:
 	Window window;
+	Camera cam;
 	AgniTimer timer;
 	std::vector<std::unique_ptr<class Box >> boxes ;
 	std::unique_ptr<class Sphere > sphere;

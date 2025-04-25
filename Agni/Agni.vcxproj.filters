@@ -79,6 +79,12 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{bdfe69ae-44c2-46af-8d3a-1d17d7926f7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Camera">
+      <UniqueIdentifier>{145d5336-0983-4d7a-8efa-fb485f7facd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Camera">
+      <UniqueIdentifier>{75069342-dde4-4d6d-960e-7040b57918fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -195,6 +201,9 @@
     <ClInclude Include="ImGuiManager.h">
       <Filter>Header Files\ImGui Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Agni.cpp">
@@ -286,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="ImGuiManager.cpp">
       <Filter>Source Files\ImGui Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

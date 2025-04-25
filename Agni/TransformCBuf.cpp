@@ -26,7 +26,7 @@ void TransformCBuf::Bind(Graphics& gfx) noexcept
 	INFOMAN(gfx);
 	DirectX::XMMATRIX consts = 
 		DirectX::XMMatrixTranspose(
-			parent.GetTransformXM() * gfx.GetProjection()
+			parent.GetTransformXM()* gfx.GetCamera() * gfx.GetProjection()
 		);
 	D3D11_MAPPED_SUBRESOURCE msr;
 	GFX_THROW_INFO(GetContext(gfx)->Map(
