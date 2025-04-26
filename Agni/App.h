@@ -17,6 +17,7 @@ private:
 	AgniTimer timer;
 	std::vector<std::unique_ptr<class Box >> boxes ;
 	std::unique_ptr<class Sphere > sphere;
+	float speed_factor=1.0f;
 ;};
 
 

@@ -14,24 +14,17 @@ App::App() :
 	window(1280, 720, L"Agni Engine")
 {
 	
-	int count = 800;
-	std::mt19937 rng(static_cast<unsigned int>(std::time(nullptr)));
-	std::uniform_real_distribution<float> xDist(-10.0f, 10.0f);     // Random x position
-	std::uniform_real_distribution<float> yDist(-10.0f, 10.0f);     // Random y position
-	std::uniform_real_distribution<float> zDist(0.0f, 200.0f);      // Random z position
-	std::uniform_real_distribution<float> speedDist(6.5f, 200.0f);    // Random speed
-	std::uniform_real_distribution<float> angleDist(0.0f, 6.28f);   // Random angle (0 to 2π)
+	int count = 20;
+	std::mt19937 rng(std::random_device{}());
+	std::uniform_real_distribution<float> adist(0.0f, 3.1415f * 2.0f);
+	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
+	std::uniform_real_distribution<float> odist(0.0f, 3.1415f * 0.3f);
+	std::uniform_real_distribution<float> rdist(20.0f, 80.0f);
 
 	// Create the specified number of boxes
 	for (int i = 0; i < count; i++) {
-		float x = xDist(rng);
-		float y = yDist(rng);
-		float z = zDist(rng);
-		float speed = speedDist(rng);
-		float angle = angleDist(rng);
-
 		// Create a box with random parameters and add it to the vector
-		boxes.push_back(std::make_unique<Box>(window.Gfx(), x, y, z, speed, angle));
+		boxes.push_back(std::make_unique<Box>(window.Gfx(), rng,adist,ddist,odist,rdist));
 	}
 
 	window.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 100.0f));
@@ -55,7 +48,7 @@ void App::DoFrame()
 	window.Gfx().BeginFrame(0, 0, 0);
 	Graphics& gfx = window.Gfx();
 	window.Gfx().SetCamera(cam.GetMatrix());
-	const float dt = timer.Mark();
+	const float dt = timer.Mark()*speed_factor;
 	for (auto& box : boxes)
  	{
  		box->Update(dt);
@@ -64,6 +57,7 @@ void App::DoFrame()
 
 	if (ImGui::Begin("Agni Editor")) {
 		ImGui::Text("Frame Rate: %.1f", ImGui::GetIO().Framerate);
+		ImGui::SliderFloat("Speed", &speed_factor, 0.0f, 10.0f, "%.1f");
 	}
 
 	cam.SpawnCameraController();

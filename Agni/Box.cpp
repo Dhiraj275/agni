@@ -3,12 +3,23 @@
 #include "GraphicsThrowMacros.h"
 #include <cmath>
 
-Box::Box(Graphics& gfx, float x, float y, float z, float speed, float angle):
-	x(x),
-	y(y),
-	z(z),
-	speed(speed),
-	angle(angle)
+Box::Box(Graphics& gfx, 
+	std::mt19937& rng,
+	std::uniform_real_distribution<float>& adist,
+	std::uniform_real_distribution<float>& ddist,
+	std::uniform_real_distribution<float>& odist,
+	std::uniform_real_distribution<float>& rdist
+	):
+	r(rdist(rng)),
+	droll(ddist(rng)),
+	dpitch(ddist(rng)),
+	dyaw(ddist(rng)),
+	dphi(odist(rng)),
+	dtheta(odist(rng)),
+	dchi(odist(rng)),
+	chi(adist(rng)),
+	theta(adist(rng)),
+	phi(adist(rng))
 {
 	if (!IsStaticInitialized()) {
 		struct Vertex
@@ -90,15 +101,19 @@ Box::Box(Graphics& gfx, float x, float y, float z, float speed, float angle):
 
 void Box::Update(float dt) noexcept
 {
-	angle +=1.0f*dt;
-	y = std::sinf(angle) * speed;
-	z = std::sinf(angle) * speed;
-	x = std::cosf(angle) * speed;
+	phi += dphi * dt;
+	theta += dtheta * dt;
+	roll += droll * dt;
+	yaw += dyaw * dt;
+	chi += dchi * dt;
+	pitch += dpitch * dt;
+
 }
 
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
 	return
-		DirectX::XMMatrixRotationY(angle) *
-		DirectX::XMMatrixTranslation(x, y, z);
+		DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
+		DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
+		DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi);
 }
