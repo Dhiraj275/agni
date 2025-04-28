@@ -5,7 +5,7 @@ TransformCBuf::TransformCBuf(Graphics& gfx, Drawable & parent)
 	INFOMAN(gfx);
 	if (!pVertexConstantBuffer)
 	{
-		pVertexConstantBuffer = std::make_unique<VertexConstantBuffer<DirectX::XMMATRIX>>(gfx);
+		pVertexConstantBuffer = std::make_unique<VertexConstantBuffer<Transforms>>(gfx);
 	}
 }
 
@@ -14,14 +14,22 @@ void TransformCBuf::Bind(Graphics& gfx) noexcept
     
 	//update
 	INFOMAN(gfx);
-	pVertexConstantBuffer->Update(gfx,
+	const auto model = parent.GetTransformXM();
+	const Transforms tf =
+	{
+		DirectX::XMMatrixTranspose(model),
 		DirectX::XMMatrixTranspose(
-			parent.GetTransformXM() * gfx.GetCamera() * gfx.GetProjection()
+			model *
+			gfx.GetCamera() *
+			gfx.GetProjection()
 		)
+	};
+	pVertexConstantBuffer->Update(gfx,
+		tf
 	);
 	
 	//bind
 	pVertexConstantBuffer->Bind(gfx);
 }
 
-std::unique_ptr<VertexConstantBuffer<DirectX::XMMATRIX>> TransformCBuf::pVertexConstantBuffer;
+std::unique_ptr<VertexConstantBuffer<TransformCBuf::Transforms>> TransformCBuf::pVertexConstantBuffer;

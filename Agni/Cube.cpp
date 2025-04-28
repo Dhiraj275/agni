@@ -1,25 +1,14 @@
-#include "Box.h"
+#include "Cube.h"
 #include "TransformCBuf.h"
 #include "GraphicsThrowMacros.h"
 #include <cmath>
 
-Box::Box(Graphics& gfx, 
-	std::mt19937& rng,
-	std::uniform_real_distribution<float>& adist,
-	std::uniform_real_distribution<float>& ddist,
-	std::uniform_real_distribution<float>& odist,
-	std::uniform_real_distribution<float>& rdist
-	):
-	r(rdist(rng)),
-	droll(ddist(rng)),
-	dpitch(ddist(rng)),
-	dyaw(ddist(rng)),
-	dphi(odist(rng)),
-	dtheta(odist(rng)),
-	dchi(odist(rng)),
-	chi(adist(rng)),
-	theta(adist(rng)),
-	phi(adist(rng))
+Cube::Cube(Graphics& gfx, float x, float y, float z, float speed, float angle) :
+	x(x),
+	y(y),
+	z(z),
+	speed(speed),
+	angle(angle)
 {
 	if (!IsStaticInitialized()) {
 		struct Vertex
@@ -75,26 +64,21 @@ Box::Box(Graphics& gfx,
 
 		const std::vector<unsigned short> indices =
 		{
-			0,2,1, 2,3,1,
-			1,3,5, 3,7,5,
-			2,6,3, 3,6,7,
-			4,5,7, 4,7,6,
-			0,4,2, 2,4,6,
-			0,1,4, 1,5,4
+			// Near face (-Z)
+			0, 2, 1,  2, 3, 1,
+			// Far face (+Z)
+			4, 5, 6,  5, 7, 6,
+			// Left face (-X)
+			8, 10, 9,  9, 10, 11,
+			// Right face (+X)
+			12, 13, 14,  13, 15, 14,
+			// Bottom face (-Y)
+			16, 17, 18,  17, 19, 18,
+			// Top face (+Y)
+			20, 22, 21,  21, 22, 23
 		};
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
-		struct ConstantBuffer2
-		{
-			struct
-			{
-				float r;
-				float g;
-				float b;
-				float a;
-			} face_colors[6];
-		};
-	
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
 			{ "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
@@ -111,21 +95,15 @@ Box::Box(Graphics& gfx,
 	AddBind(std::make_unique<TransformCBuf>(gfx, *this));
 }
 
-void Box::Update(float dt) noexcept
+void Cube::Update(float dt) noexcept
 {
-	phi += dphi * dt;
-	theta += dtheta * dt;
-	roll += droll * dt;
-	yaw += dyaw * dt;
-	chi += dchi * dt;
-	pitch += dpitch * dt;
-
+	angle += 1.0f * dt;
 }
 
-DirectX::XMMATRIX Box::GetTransformXM() const noexcept
+DirectX::XMMATRIX Cube::GetTransformXM() const noexcept
 {
 	return
-		DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-		DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
-		DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi);
+		DirectX::XMMatrixRotationY(angle)*
+		DirectX::XMMatrixRotationZ(angle) *
+		DirectX::XMMatrixTranslation(5.0f, 0.0f, 0.0f);
 }

@@ -4,6 +4,8 @@
 #include "Sphere.h"
 #include "Camera.h"
 #include "Box.h"
+#include "Cube.h"
+#include "PointLight.h"
 class App
 {
 public:
@@ -15,7 +17,9 @@ private:
 	Window window;
 	Camera cam;
 	AgniTimer timer;
+	PointLight light;
 	std::vector<std::unique_ptr<class Box >> boxes ;
+	std::unique_ptr<class Cube > cube;
 	std::unique_ptr<class Sphere > sphere;
 	float speed_factor=1.0f;
 ;};
