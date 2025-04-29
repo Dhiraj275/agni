@@ -5,7 +5,7 @@ class Cube : public DrawableBase<Cube>
 {
 public:
 	Cube(Graphics& gfx,
-		float x, float y, float z, float speed, float angle);
+		float x, float y, float z, float speed, float angle, DirectX::XMFLOAT3 materialColor);
 	void Update(float dt) noexcept override;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 
@@ -15,6 +15,6 @@ private:
 	float z;
 	float speed;
 	float angle;
-
+	DirectX::XMFLOAT3 materialColor;
 
 };

@@ -13,8 +13,22 @@ App::App() :
 	window(1280, 720, L"Agni Engine"),
 	light(window.Gfx())
 {
+	std::mt19937 rng(std::random_device{}());
+	std::uniform_real_distribution<float> adist(0.0f, 3.1415f * 2.0f);
+	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
+	std::uniform_real_distribution<float> odist(0.0f, 3.1415f * 0.3f);
+	std::uniform_real_distribution<float> rdist(6.0f, 20.0f);
+	std::uniform_real_distribution<float> cdist(0.0f, 1.0f);
 	
-	cube = std::make_unique<Cube>(window.Gfx(), 8.0f, 0.0f, 0.0f, 0.0f,0.0f);
+	for (auto i = 0; i < 80; i++)
+	{
+		DirectX::XMFLOAT3 materialColor = { cdist(rng), cdist(rng), cdist(rng)};
+		boxes.push_back(std::make_unique<Box>(
+			window.Gfx(), rng, adist,
+			ddist, odist, rdist,
+			materialColor
+		));
+	}
 	window.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 100.0f));
 	
 }
@@ -38,8 +52,10 @@ void App::DoFrame()
 	window.Gfx().SetCamera(cam.GetMatrix());
 	light.Bind(gfx);
 	const float dt = timer.Mark()*speed_factor;
-	cube->Update(dt);
-	cube->Draw(gfx);
+	for (auto & drawable : boxes) {
+		drawable->Update(dt);
+		drawable->Draw(gfx);
+	}
 	if (ImGui::Begin("Agni Editor")) {
 		ImGui::Text("Frame Rate: %.1f", ImGui::GetIO().Framerate);
 		ImGui::SliderFloat("Speed", &speed_factor, 0.0f, 10.0f, "%.1f");

@@ -3,12 +3,13 @@
 #include "GraphicsThrowMacros.h"
 #include <cmath>
 
-Cube::Cube(Graphics& gfx, float x, float y, float z, float speed, float angle) :
+Cube::Cube(Graphics& gfx, float x, float y, float z, float speed, float angle, DirectX::XMFLOAT3 materialColor):
 	x(x),
 	y(y),
 	z(z),
 	speed(speed),
-	angle(angle)
+	angle(angle),
+	materialColor(materialColor)
 {
 	if (!IsStaticInitialized()) {
 		struct Vertex
@@ -93,6 +94,15 @@ Cube::Cube(Graphics& gfx, float x, float y, float z, float speed, float angle) :
 		SetIndexFromStatic();
 	}
 	AddBind(std::make_unique<TransformCBuf>(gfx, *this));
+	struct MaterialColorConstantBuffer {
+		DirectX::XMFLOAT3 materialColor;
+		float padding;
+	};
+	MaterialColorConstantBuffer mc = {
+		materialColor,
+		0.0f
+	};
+	AddBind(std::make_unique<PixelConstantBuffer<MaterialColorConstantBuffer>>(gfx, mc, 1u));
 }
 
 void Cube::Update(float dt) noexcept
@@ -105,5 +115,5 @@ DirectX::XMMATRIX Cube::GetTransformXM() const noexcept
 	return
 		DirectX::XMMatrixRotationY(angle)*
 		DirectX::XMMatrixRotationZ(angle) *
-		DirectX::XMMatrixTranslation(5.0f, 0.0f, 0.0f);
+		DirectX::XMMatrixTranslation(x, y, z);
 }

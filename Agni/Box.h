@@ -9,12 +9,14 @@ public:
 		std::uniform_real_distribution<float>& adist,
 		std::uniform_real_distribution<float>& ddist,
 		std::uniform_real_distribution<float>& odist,
-		std::uniform_real_distribution<float>& rdis
+		std::uniform_real_distribution<float>& rdis,
+		DirectX::XMFLOAT3 materialColor
 		);
 	void Update(float dt) noexcept override;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 
 private:
+	DirectX::XMFLOAT3 mtc;
 	float r = 0.0f;
 	float theta = 0.0f;
 	float phi = 0.0f;
