@@ -43,3 +43,12 @@ void Camera::ResetCamera()
 {
   
 }
+
+void Camera::Update(float dt)
+{
+    r += 5.0f * dt;
+    theta += 0.4f * dt;
+    // Optional: clamp to prevent it from going too far
+    if (r > 50.0f) r = 50.0f;
+    if (theta > 3.0f) theta = 3.0f;
+}

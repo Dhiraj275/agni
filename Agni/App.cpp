@@ -13,12 +13,12 @@ App::App() :
 	window(1280, 720, L"Agni Engine"),
 	light(window.Gfx())
 {
-	int count = 800;
+	int count = 400;
 	std::mt19937 rng(std::random_device{}());
 	std::uniform_real_distribution<float> adist(0.0f, 3.1415f * 2.0f);
 	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
 	std::uniform_real_distribution<float> odist(0.0f, 3.1415f * 0.3f);
-	std::uniform_real_distribution<float> rdist(6.0f, 20.0f);
+	std::uniform_real_distribution<float> rdist(6.0f, 100.0f);
 	std::uniform_real_distribution<float> cdist(0.0f, 1.0f);
 	
 	for (auto i = 0; i < count; i++)
@@ -63,6 +63,7 @@ void App::DoFrame()
 	}
 	light.SpawnControlWindow();
 	cam.SpawnCameraController();
+	cam.Update(dt);
 	ImGui::End();
 	window.Gfx().EndFrame();
 } 

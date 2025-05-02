@@ -20,7 +20,7 @@ private:
 	PointLight light;
 	std::vector<std::unique_ptr<class Box >> boxes;
 	std::unique_ptr<class Sphere > sphere;
-	float speed_factor=1.0f;
+	float speed_factor=0.0f;
 ;};
 
 

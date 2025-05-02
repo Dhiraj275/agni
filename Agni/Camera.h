@@ -6,9 +6,10 @@ public:
 	DirectX::XMMATRIX GetMatrix() const noexcept;
 	void SpawnCameraController();
 	void ResetCamera();
+	void Update(float dt);
 private:
 	//position
-	float r = 20.0f;
+	float r = 0.1f;
 	float theta = 0.0f;
 	float phi = 0.0f;
 	//orientation
