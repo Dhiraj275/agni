@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "AgniTimer.h"
 #include "Sphere.h"
+#include "Test3dModel.h"
 #include "Camera.h"
 #include "Box.h"
 #include "Cube.h"
@@ -20,6 +21,7 @@ private:
 	PointLight light;
 	std::vector<std::unique_ptr<class Box >> boxes;
 	std::unique_ptr<class Sphere > sphere;
+	std::unique_ptr<class Model3d > model;
 	float speed_factor=0.0f;
 ;};
 

@@ -176,6 +176,7 @@
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Test3dModel.h" />
     <ClInclude Include="TransformCBuf.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InputLayout.h" />
@@ -200,7 +201,6 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Drawable.cpp" />
-    <ClCompile Include="DrawableBase.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="ImGuiManager.cpp" />
@@ -219,6 +219,7 @@
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Test3dModel.cpp" />
     <ClCompile Include="TransformCBuf.cpp" />
     <ClCompile Include="Topology.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
