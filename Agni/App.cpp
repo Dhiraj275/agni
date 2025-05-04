@@ -69,6 +69,7 @@ void App::DoFrame()
 		ImGui::SliderFloat("Speed", &speed_factor, 0.0f, 10.0f, "%.1f");
 	}
 	light.SpawnControlWindow();
+	model->SpawnController();
 	cam.SpawnCameraController();
 	cam.Update(0);
 	ImGui::End();
