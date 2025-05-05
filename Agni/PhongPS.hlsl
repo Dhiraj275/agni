@@ -27,7 +27,7 @@ float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
 	//specular highlighting
     const float3 w = n * dot(vToL, n);
     const float3 r = w * 2.0f - vToL;
-    const float3 specular = att * (diffuseColor * diffuseIntensity) * 10 * pow(max(0.0f, dot(normalize(-r), normalize(worldPos))), 64);
+    const float3 specular = att * (diffuseColor * diffuseIntensity) * 1 * pow(max(0.0f, dot(normalize(-r), normalize(worldPos))), 64);
 
     
     // final color

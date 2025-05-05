@@ -16,7 +16,7 @@ App::App() :
 	window(1280, 720, L"Agni Engine"),
 	light(window.Gfx())
 {
-	int count = 0;
+	int count = 200;
 	std::mt19937 rng(std::random_device{}());
 	std::uniform_real_distribution<float> adist(0.0f, 3.1415f * 2.0f);
 	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
@@ -33,8 +33,6 @@ App::App() :
 			materialColor
 		));
 	}
-	DirectX::XMFLOAT3 materialColor = { cdist(rng), cdist(rng), cdist(rng) };
-	model = std::make_unique<Model3d>(window.Gfx(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, materialColor);
 	window.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 100.0f));
 	
 }
@@ -62,14 +60,11 @@ void App::DoFrame()
 		drawable->Update(dt);
 		drawable->Draw(gfx);
 	}
-	model->Update(dt);
-	model->Draw(gfx);
 	if (ImGui::Begin("Agni Editor")) {
 		ImGui::Text("Frame Rate: %.1f", ImGui::GetIO().Framerate);
 		ImGui::SliderFloat("Speed", &speed_factor, 0.0f, 10.0f, "%.1f");
 	}
 	light.SpawnControlWindow();
-	model->SpawnController();
 	cam.SpawnCameraController();
 	cam.Update(0);
 	ImGui::End();
