@@ -117,3 +117,10 @@ DirectX::XMMATRIX Cube::GetTransformXM() const noexcept
 		DirectX::XMMatrixRotationZ(angle) *
 		DirectX::XMMatrixTranslation(x, y, z);
 }
+
+void Cube::SetPos(DirectX::XMFLOAT3 pos) noexcept
+{
+	x = pos.x;
+	y = pos.y;
+	z = pos.z;
+}

@@ -1,6 +1,5 @@
 #include "PointLight.h"
 #include "imgui/imgui.h"
-
 PointLight::PointLight(Graphics& gfx)
 	:
 	cbuf(gfx)
@@ -34,4 +33,12 @@ void PointLight::Bind(Graphics& gfx) const noexcept
 {
 	cbuf.Update(gfx, PointLightCBuf{ pos });
 	cbuf.Bind(gfx);
+}
+
+void PointLight::Draw(Graphics& gfx) noexcept
+{
+	static DirectX::XMFLOAT3 color = { 1.0f, 1.0f, 1.0f };
+	cube = std::make_unique<Cube>(gfx,0.0f, 0.0f, 0.0f, 0.0f, 0.0f, color);
+	cube->SetPos(pos);
+	cube->Draw(gfx);
 }

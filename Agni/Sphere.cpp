@@ -1,8 +1,8 @@
 #include "Sphere.h"
 #include "TransformCBuf.h"
 #include <cmath>
-Sphere::Sphere(Graphics& gfx, float x, float y, float z, float radius, float speed, float angle)
-    : x(x), y(y), z(z), radius(radius), speed(speed), angle(angle)
+Sphere::Sphere(Graphics& gfx, float x, float y, float z, float radius)
+    : x(x), y(y), z(z), radius(radius)
 {
     // Generate sphere vertices and indices
     struct Vertex {
@@ -64,11 +64,11 @@ Sphere::Sphere(Graphics& gfx, float x, float y, float z, float radius, float spe
     // Add bindings similar to Box class
     AddBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
-    auto pvs = std::make_unique<VertexShader>(gfx, L"SphereVertexShader.cso");
+    auto pvs = std::make_unique<VertexShader>(gfx, L"SolidSphereVS.cso");
     auto pvsbc = pvs->GetBytecode();
     AddBind(std::move(pvs));
 
-    AddBind(std::make_unique<PixelShader>(gfx, L"SpherePixelShader.cso"));
+    AddBind(std::make_unique<PixelShader>(gfx, L"SolidSpherePS.cso"));
 
     AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
@@ -109,15 +109,10 @@ Sphere::Sphere(Graphics& gfx, float x, float y, float z, float radius, float spe
 
 void Sphere::Update(float dt) noexcept
 {
-    angle += 1.0f * dt;
-    x += std::sinf(angle) * speed * dt;
-    y += std::cosf(angle) * speed * dt;
-    z = std::sinf(angle) * speed; // Oscillates around 0
+
 }
 
 DirectX::XMMATRIX Sphere::GetTransformXM() const noexcept
 {
-    return DirectX::XMMatrixRotationY(angle) *
-        /*DirectX::XMMatrixRotationZ(angle) **/
-        DirectX::XMMatrixTranslation(0, 0, 20.0f);
+    return DirectX::XMMatrixTranslation(x, y, z);
 }
