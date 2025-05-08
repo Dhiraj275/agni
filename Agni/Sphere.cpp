@@ -64,11 +64,11 @@ Sphere::Sphere(Graphics& gfx, float x, float y, float z, float radius)
     // Add bindings similar to Box class
     AddBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
-    auto pvs = std::make_unique<VertexShader>(gfx, L"SolidSphereVS.cso");
+    auto pvs = std::make_unique<VertexShader>(gfx, L"SolidVS.cso");
     auto pvsbc = pvs->GetBytecode();
     AddBind(std::move(pvs));
 
-    AddBind(std::make_unique<PixelShader>(gfx, L"SolidSpherePS.cso"));
+    AddBind(std::make_unique<PixelShader>(gfx, L"SolidPS.cso"));
 
     AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
@@ -115,4 +115,11 @@ void Sphere::Update(float dt) noexcept
 DirectX::XMMATRIX Sphere::GetTransformXM() const noexcept
 {
     return DirectX::XMMatrixTranslation(x, y, z);
+}
+
+void Sphere::SetPos(DirectX::XMFLOAT3 pos) noexcept
+{
+    x = pos.x;
+    y = pos.y;
+    z = pos.z;
 }

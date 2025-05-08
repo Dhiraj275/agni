@@ -38,7 +38,7 @@ void PointLight::Bind(Graphics& gfx) const noexcept
 void PointLight::Draw(Graphics& gfx) noexcept
 {
 	static DirectX::XMFLOAT3 color = { 1.0f, 1.0f, 1.0f };
-	cube = std::make_unique<Cube>(gfx,0.0f, 0.0f, 0.0f, 0.0f, 0.0f, color);
-	cube->SetPos(pos);
-	cube->Draw(gfx);
+	sphere = std::make_unique<Sphere>(gfx,0.0f, 0.0f, 0.0f, 0.5f);
+	sphere->SetPos(pos);
+	sphere->Draw(gfx);
 }

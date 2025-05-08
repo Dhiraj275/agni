@@ -1,7 +1,7 @@
 #pragma once
 #include "Graphics.h"
 #include "ConstantBuffers.h"
-#include "Cube.h"
+#include "Sphere.h"
 class PointLight
 {
 public:
@@ -16,7 +16,7 @@ private:
 		DirectX::XMFLOAT3 pos;
 		float padding;
 	};
-	std::unique_ptr<class Cube> cube;
+	std::unique_ptr<class Sphere> sphere;
 private:
 	DirectX::XMFLOAT3 pos = { 0.0f,0.0f,0.0f };
 	mutable PixelConstantBuffer<PointLightCBuf> cbuf;

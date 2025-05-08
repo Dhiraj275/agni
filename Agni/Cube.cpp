@@ -12,78 +12,45 @@ Cube::Cube(Graphics& gfx, float x, float y, float z, float speed, float angle, D
 	materialColor(materialColor)
 {
 	if (!IsStaticInitialized()) {
-		struct Vertex
-		{
-			DirectX::XMFLOAT3 pos;
-			DirectX::XMFLOAT3 n;
+		struct Vertex {
+			struct
+			{
+				float x;
+				float y;
+				float z;
+			} pos;
 		};
-		const std::vector<Vertex> vertices =
-		{
-			{ { -0.5f, -0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } }, // 0
-			{ {  0.5f, -0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } }, // 1
-			{ { -0.5f,  0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } }, // 2
-			{ {  0.5f,  0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } }, // 3
-
-			// Far face (+Z) - Normal: (0, 0, 1)
-			{ { -0.5f, -0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } }, // 4
-			{ {  0.5f, -0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } }, // 5
-			{ { -0.5f,  0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } }, // 6
-			{ {  0.5f,  0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } }, // 7
-
-			// Left face (-X) - Normal: (-1, 0, 0)
-			{ { -0.5f, -0.5f, -0.5f }, { -1.0f,  0.0f,  0.0f } }, // 8
-			{ { -0.5f,  0.5f, -0.5f }, { -1.0f,  0.0f,  0.0f } }, // 9
-			{ { -0.5f, -0.5f,  0.5f }, { -1.0f,  0.0f,  0.0f } }, // 10
-			{ { -0.5f,  0.5f,  0.5f }, { -1.0f,  0.0f,  0.0f } }, // 11
-
-			// Right face (+X) - Normal: (1, 0, 0)
-			{ {  0.5f, -0.5f, -0.5f }, {  1.0f,  0.0f,  0.0f } }, // 12
-			{ {  0.5f,  0.5f, -0.5f }, {  1.0f,  0.0f,  0.0f } }, // 13
-			{ {  0.5f, -0.5f,  0.5f }, {  1.0f,  0.0f,  0.0f } }, // 14
-			{ {  0.5f,  0.5f,  0.5f }, {  1.0f,  0.0f,  0.0f } }, // 15
-
-			// Bottom face (-Y) - Normal: (0, -1, 0)
-			{ { -0.5f, -0.5f, -0.5f }, {  0.0f, -1.0f,  0.0f } }, // 16
-			{ {  0.5f, -0.5f, -0.5f }, {  0.0f, -1.0f,  0.0f } }, // 17
-			{ { -0.5f, -0.5f,  0.5f }, {  0.0f, -1.0f,  0.0f } }, // 18
-			{ {  0.5f, -0.5f,  0.5f }, {  0.0f, -1.0f,  0.0f } }, // 19
-
-			// Top face (+Y) - Normal: (0, 1, 0)
-			{ { -0.5f,  0.5f, -0.5f }, {  0.0f,  1.0f,  0.0f } }, // 20
-			{ {  0.5f,  0.5f, -0.5f }, {  0.0f,  1.0f,  0.0f } }, // 21
-			{ { -0.5f,  0.5f,  0.5f }, {  0.0f,  1.0f,  0.0f } }, // 22
-			{ {  0.5f,  0.5f,  0.5f }, {  0.0f,  1.0f,  0.0f } }  // 23
-
+		const std::vector<Vertex> vertices = {
+			{ -1.0f,-1.0f,-1.0f },
+			{ 1.0f,-1.0f,-1.0f },
+			{ -1.0f,1.0f,-1.0f },
+			{ 1.0f,1.0f,-1.0f },
+			{ -1.0f,-1.0f,1.0f },
+			{ 1.0f,-1.0f,1.0f },
+			{ -1.0f,1.0f,1.0f },
+			{ 1.0f,1.0f,1.0f },
 		};
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
-		auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
+		auto pvs = std::make_unique<VertexShader>(gfx, L"SolidVS.cso");
 		auto pvsbc = pvs->GetBytecode();
 		AddStaticBind(std::move(pvs));
 
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"SolidPS.cso"));
 
-		const std::vector<unsigned short> indices =
-		{
-			// Near face (-Z)
-			0, 2, 1,  2, 3, 1,
-			// Far face (+Z)
-			4, 5, 6,  5, 7, 6,
-			// Left face (-X)
-			8, 10, 9,  9, 10, 11,
-			// Right face (+X)
-			12, 13, 14,  13, 15, 14,
-			// Bottom face (-Y)
-			16, 17, 18,  17, 19, 18,
-			// Top face (+Y)
-			20, 22, 21,  21, 22, 23
+		const std::vector<unsigned short> indices = {
+		0,2,1, 2,3,1,
+		1,3,5, 3,7,5,
+		2,6,3, 3,6,7,
+		4,5,7, 4,7,6,
+		0,4,2, 2,4,6,
+		0,1,4, 1,5,4
 		};
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
 			{ "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-			{ "Normal",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
 		};
 		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
 
@@ -94,15 +61,6 @@ Cube::Cube(Graphics& gfx, float x, float y, float z, float speed, float angle, D
 		SetIndexFromStatic();
 	}
 	AddBind(std::make_unique<TransformCBuf>(gfx, *this));
-	struct MaterialColorConstantBuffer {
-		DirectX::XMFLOAT3 materialColor;
-		float padding;
-	};
-	MaterialColorConstantBuffer mc = {
-		materialColor,
-		0.0f
-	};
-	AddBind(std::make_unique<PixelConstantBuffer<MaterialColorConstantBuffer>>(gfx, mc, 1u));
 }
 
 void Cube::Update(float dt) noexcept
