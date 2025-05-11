@@ -1,6 +1,5 @@
 #include "Box.h"
 #include "TransformCBuf.h"
-#include "GraphicsThrowMacros.h"
 #include <cmath>
 
 Box::Box(Graphics& gfx, 

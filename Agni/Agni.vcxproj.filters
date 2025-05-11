@@ -213,8 +213,14 @@
     <ClInclude Include="Test3dModel.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="Sampler.h">
+      <Filter>Header Files\Bindable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -317,8 +323,14 @@
     <ClCompile Include="Test3dModel.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="Sampler.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Source Files\Drawable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -331,6 +343,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Agni.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="C:\Users\rp170\Downloads\kappa50.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
@@ -360,6 +375,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="SolidVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PlaneVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="PlanePS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

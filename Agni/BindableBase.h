@@ -6,3 +6,5 @@
 #include "Topology.h"
 #include "VertexBuffer.h"
 #include "VertexShader.h"
+#include "Sampler.h"
+#include "Texture.h"

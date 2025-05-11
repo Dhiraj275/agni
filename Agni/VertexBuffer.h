@@ -1,5 +1,5 @@
 #pragma once
-#include "Bindable.h"
+#include "BindableBase.h"
 #include "GraphicsThrowMacros.h"
 
 class VertexBuffer : public Bindable
