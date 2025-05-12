@@ -8,6 +8,7 @@
 #include "Plane.h"
 #include "Cube.h"
 #include "PointLight.h"
+#include "Skybox.h"
 class App
 {
 public:
@@ -20,6 +21,7 @@ private:
 	Camera cam;
 	AgniTimer timer;
 	PointLight light;
+	std::unique_ptr<class Skybox> skybox;
 	std::vector<std::unique_ptr<class Box >> boxes;
 	std::unique_ptr<class Sphere> sphere;
 	std::unique_ptr<class Model3d> model;

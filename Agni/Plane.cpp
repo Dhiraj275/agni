@@ -14,44 +14,65 @@ Plane::Plane(Graphics& gfx, float x, float y, float z, float speed, float angle)
 			DirectX::XMFLOAT3 pos;
 			DirectX::XMFLOAT2 tex;
 		};
+		auto tileUV = [](int x, int y) -> std::pair<float, float> {
+			const float tileWidth = 384.0f;
+			const float tileHeight = 384.0f;
+			const float textureWidth = 1536.0f;
+			const float textureHeight = 1152.0f;
+
+			return {
+				(x * tileWidth) / textureWidth,
+				(y * tileHeight) / textureHeight
+			};
+			};
+
+		// Get UV bounds for each face
+		auto [uSideMin, vSideMin] = tileUV(1, 1);
+		auto [uSideMax, vSideMax] = tileUV(2, 2);
+
+		auto [uTopMin, vTopMin] = tileUV(1, 0);
+		auto [uTopMax, vTopMax] = tileUV(2, 1);
+
+		auto [uBottomMin, vBottomMin] = tileUV(1, 2);
+		auto [uBottomMax, vBottomMax] = tileUV(2, 3);
+
 		const std::vector<Vertex> vertices = {
-			// Front face
-			{ { -1.0f, -1.0f, -1.0f }, { 0.0f, 1.0f } },
-			{ { -1.0f,  1.0f, -1.0f }, { 0.0f, 0.0f } },
-			{ {  1.0f,  1.0f, -1.0f }, { 1.0f, 0.0f } },
-			{ {  1.0f, -1.0f, -1.0f }, { 1.0f, 1.0f } },
+			// Front face (side texture)
+			{ { -1.0f, -1.0f, -1.0f }, { uSideMin, vSideMax } },
+			{ { -1.0f,  1.0f, -1.0f }, { uSideMin, vSideMin } },
+			{ {  1.0f,  1.0f, -1.0f }, { uSideMax, vSideMin } },
+			{ {  1.0f, -1.0f, -1.0f }, { uSideMax, vSideMax } },
 
-			// Back face
-			{ { -1.0f, -1.0f, 1.0f }, { 1.0f, 1.0f } },
-			{ {  1.0f, -1.0f, 1.0f }, { 0.0f, 1.0f } },
-			{ {  1.0f,  1.0f, 1.0f }, { 0.0f, 0.0f } },
-			{ { -1.0f,  1.0f, 1.0f }, { 1.0f, 0.0f } },
+			// Back face (side texture)
+			{ { -1.0f, -1.0f, 1.0f }, { uSideMax, vSideMax } },
+			{ {  1.0f, -1.0f, 1.0f }, { uSideMin, vSideMax } },
+			{ {  1.0f,  1.0f, 1.0f }, { uSideMin, vSideMin } },
+			{ { -1.0f,  1.0f, 1.0f }, { uSideMax, vSideMin } },
 
-			// Top face
-			{ { -1.0f, 1.0f, -1.0f }, { 0.0f, 1.0f } },
-			{ { -1.0f, 1.0f,  1.0f }, { 0.0f, 0.0f } },
-			{ {  1.0f, 1.0f,  1.0f }, { 1.0f, 0.0f } },
-			{ {  1.0f, 1.0f, -1.0f }, { 1.0f, 1.0f } },
+			// Top face (grass top)
+			{ { -1.0f, 1.0f, -1.0f }, { uTopMin, vTopMax } },
+			{ { -1.0f, 1.0f,  1.0f }, { uTopMin, vTopMin } },
+			{ {  1.0f, 1.0f,  1.0f }, { uTopMax, vTopMin } },
+			{ {  1.0f, 1.0f, -1.0f }, { uTopMax, vTopMax } },
 
-			// Bottom face
-			{ { -1.0f, -1.0f, -1.0f }, { 1.0f, 1.0f } },
-			{ {  1.0f, -1.0f, -1.0f }, { 0.0f, 1.0f } },
-			{ {  1.0f, -1.0f,  1.0f }, { 0.0f, 0.0f } },
-			{ { -1.0f, -1.0f,  1.0f }, { 1.0f, 0.0f } },
+			// Bottom face (dirt)
+			{ { -1.0f, -1.0f, -1.0f }, { uBottomMax, vBottomMax } },
+			{ {  1.0f, -1.0f, -1.0f }, { uBottomMin, vBottomMax } },
+			{ {  1.0f, -1.0f,  1.0f }, { uBottomMin, vBottomMin } },
+			{ { -1.0f, -1.0f,  1.0f }, { uBottomMax, vBottomMin } },
 
-			// Left face
-			{ { -1.0f, -1.0f,  1.0f }, { 0.0f, 1.0f } },
-			{ { -1.0f,  1.0f,  1.0f }, { 0.0f, 0.0f } },
-			{ { -1.0f,  1.0f, -1.0f }, { 1.0f, 0.0f } },
-			{ { -1.0f, -1.0f, -1.0f }, { 1.0f, 1.0f } },
+			// Left face (side texture)
+			{ { -1.0f, -1.0f,  1.0f }, { uSideMin, vSideMax } },
+			{ { -1.0f,  1.0f,  1.0f }, { uSideMin, vSideMin } },
+			{ { -1.0f,  1.0f, -1.0f }, { uSideMax, vSideMin } },
+			{ { -1.0f, -1.0f, -1.0f }, { uSideMax, vSideMax } },
 
-			// Right face
-			{ { 1.0f, -1.0f, -1.0f }, { 0.0f, 1.0f } },
-			{ { 1.0f,  1.0f, -1.0f }, { 0.0f, 0.0f } },
-			{ { 1.0f,  1.0f,  1.0f }, { 1.0f, 0.0f } },
-			{ { 1.0f, -1.0f,  1.0f }, { 1.0f, 1.0f } },
+			// Right face (side texture)
+			{ { 1.0f, -1.0f, -1.0f }, { uSideMin, vSideMax } },
+			{ { 1.0f,  1.0f, -1.0f }, { uSideMin, vSideMin } },
+			{ { 1.0f,  1.0f,  1.0f }, { uSideMax, vSideMin } },
+			{ { 1.0f, -1.0f,  1.0f }, { uSideMax, vSideMax } },
 		};
-
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
 		auto pvs = std::make_unique<VertexShader>(gfx, L"PlaneVS.cso");
@@ -83,7 +104,7 @@ Plane::Plane(Graphics& gfx, float x, float y, float z, float speed, float angle)
 		};
 
 		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
-		AddStaticBind(std::make_unique<Texture>(gfx, L"Texture/kappa50.png"));
+		AddStaticBind(std::make_unique<Texture>(gfx, L"Texture/grass.jpg"));
 		AddStaticBind(std::make_unique<Sampler>(gfx));
 		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 	}
@@ -104,6 +125,7 @@ DirectX::XMMATRIX Plane::GetTransformXM() const noexcept
 	return
 		DirectX::XMMatrixRotationY(angle) *
 		DirectX::XMMatrixRotationZ(angle) *
+		DirectX::XMMatrixScaling(2.0f,2.0f,2.0f)*
 		DirectX::XMMatrixTranslation(x, y, z);
 }
 

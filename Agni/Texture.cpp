@@ -9,7 +9,7 @@ Texture::Texture(Graphics & gfx,const wchar_t * fileName)
 {
     INFOMAN(gfx);
 
-    GFX_EXCEPT(DirectX::CreateWICTextureFromFile(
+    GFX_THROW_INFO(DirectX::CreateWICTextureFromFile(
         GetDevice(gfx),
         GetContext(gfx),
         fileName,

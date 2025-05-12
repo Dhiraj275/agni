@@ -102,6 +102,7 @@ Sphere::Sphere(Graphics& gfx, float x, float y, float z, float radius)
 
     AddBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
     AddBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+    AddStaticBind(std::make_unique<Rasterizer>(gfx));
 
     // Transform
     AddBind(std::make_unique<TransformCBuf>(gfx, *this));

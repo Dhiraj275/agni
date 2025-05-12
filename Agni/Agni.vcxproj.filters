@@ -222,6 +222,12 @@
     <ClInclude Include="Sampler.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rasterizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Agni.cpp">
@@ -332,6 +338,12 @@
     <ClCompile Include="Plane.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Rasterizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Agni.rc">
@@ -346,6 +358,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="C:\Users\rp170\Downloads\kappa50.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="C:\Users\rp170\Downloads\pngegg.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
@@ -381,6 +396,9 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="PlanePS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyboxVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
