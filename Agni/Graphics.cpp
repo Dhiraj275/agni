@@ -171,6 +171,7 @@ void Graphics::BeginFrame(float red, float green, float blue) noexcept
 	//imgui stuff
 	ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
+
 	ImGui::NewFrame();
 	const float color[] = { red,green,blue,1.0f };
 	GFX_THROW_INFO_ONLY(pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get()));

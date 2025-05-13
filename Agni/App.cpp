@@ -16,7 +16,7 @@ App::App() :
 	window(1280, 720, L"Agni Engine"),
 	light(window.Gfx())
 {
-	int count = 200;
+	int count = 400;
 	std::mt19937 rng(std::random_device{}());
 	std::uniform_real_distribution<float> adist(0.0f, 3.1415f * 2.0f);
 	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
@@ -34,7 +34,6 @@ App::App() :
 		));
 	}
 
-	skybox = std::make_unique<Skybox>(window.Gfx());
 	window.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 500.0f));
 	
 }
@@ -66,9 +65,6 @@ void App::DoFrame()
 		ImGui::Text("Frame Rate: %.1f", ImGui::GetIO().Framerate);
 		ImGui::SliderFloat("Speed", &speed_factor, 0.0f, 10.0f, "%.1f");
 	}
-	skybox->Update(dt);
-	skybox->Draw(gfx);
-
 	//light
 	light.SpawnControlWindow();
 	light.Draw(gfx);

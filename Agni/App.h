@@ -21,7 +21,7 @@ private:
 	Camera cam;
 	AgniTimer timer;
 	PointLight light;
-	std::unique_ptr<class Skybox> skybox;
+	//std::unique_ptr<class Skybox> skybox;
 	std::vector<std::unique_ptr<class Box >> boxes;
 	std::unique_ptr<class Sphere> sphere;
 	std::unique_ptr<class Model3d> model;

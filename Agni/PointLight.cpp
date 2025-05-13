@@ -8,7 +8,12 @@ PointLight::PointLight(Graphics& gfx)
 
 void PointLight::SpawnControlWindow() noexcept
 {
-	if (ImGui::Begin("Light"))
+	bool opened = true;
+
+	ImGui::SetNextWindowSize(ImVec2(1280.0f / 6, 720.0 / 5));
+	ImGui::SetNextWindowPos(ImVec2(0, 720.0 / 3));
+
+	if (ImGui::Begin("Light", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 	{
 		ImGui::Text("Position");
 		ImGui::SliderFloat("X", &pos.x, -60.0f, 60.0f, "%.1f");

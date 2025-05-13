@@ -23,8 +23,13 @@ DirectX::XMMATRIX Camera::GetMatrix() const noexcept
 
 void Camera::SpawnCameraController()
 {
-    //imgui setup
-    if (ImGui::Begin("Camera Controller")) {
+    bool opened = true;
+ 
+    ImGui::SetNextWindowSize(ImVec2(1280.0f / 6, 720.0/3));
+    ImGui::SetNextWindowPos(ImVec2(0,0));
+
+    if (ImGui::Begin("Camera", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+    {
 		ImGui::Text("Camera Position");
 		ImGui::SliderFloat("Radius", &r, 0.1f, 100.0f);
         ImGui::SliderAngle("Theta", &theta, -180.0f, 180.0f);

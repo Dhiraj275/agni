@@ -127,7 +127,7 @@ void Skybox::Update(float dt) noexcept
 DirectX::XMMATRIX Skybox::GetTransformXM() const noexcept
 {
 	float scale = 100.0f;
-	return DirectX::XMMatrixScaling(scale, scale, scale)*DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+	return DirectX::XMMatrixScaling(scale, scale, scale);
 }
 
 
@@ -146,7 +146,14 @@ void Skybox::TransformCBuf::Bind(Graphics& gfx) noexcept
 
 	//update
 	INFOMAN(gfx);
-	const auto modelView = parent.GetTransformXM() * gfx.GetCamera();
+	// Get the view matrix from the camera
+	auto view = gfx.GetCamera();
+
+	// Zero out the translation part to keep the skybox centered
+	view.r[3] = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Create modelView without camera translation
+	const auto modelView = parent.GetTransformXM() * view;
 	const Transforms tf =
 	{
 		DirectX::XMMatrixTranspose(
