@@ -5,6 +5,8 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "Window.h"
 #include "Resource.h"
+#include <windowsx.h>
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
@@ -126,8 +128,11 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 
         //mouse messages
     case WM_MOUSEMOVE: {
-        const POINTS p = MAKEPOINTS(lParam);
-        mouse.OnMouseMove(p.x, p.y);
+        POINT pt;
+        pt.x = GET_X_LPARAM(lParam);
+        pt.y = GET_Y_LPARAM(lParam);
+        ClientToScreen(hWnd, &pt); 
+        mouse.OnMouseMove(pt.x, pt.y);
         break;
     }
     case WM_LBUTTONDOWN: {
