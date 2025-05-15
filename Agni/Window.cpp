@@ -131,7 +131,6 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         POINT pt;
         pt.x = GET_X_LPARAM(lParam);
         pt.y = GET_Y_LPARAM(lParam);
-        ClientToScreen(hWnd, &pt); 
         mouse.OnMouseMove(pt.x, pt.y);
         break;
     }
