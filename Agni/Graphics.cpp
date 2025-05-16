@@ -13,7 +13,6 @@
 namespace wrl = Microsoft::WRL;
 namespace dx = DirectX;
 
-
 Graphics::Graphics(HWND hWnd)
 {
 	DXGI_SWAP_CHAIN_DESC sd = {};

@@ -49,8 +49,14 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 
 Window::Window(int width, int height, std::wstring title)
     :width(width), height(height), title(title) {
+    RECT wr;
+    wr.left = 50;
+    wr.right = width + wr.left;
+    wr.top = 100;
+    wr.bottom = height + wr.top;
+    AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
         hWnd = CreateWindowEx(0, Window::WindowClass::GetName(), title.c_str(),
-            WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height,
+            WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left, wr.bottom - wr.top,
             nullptr, nullptr, WindowClass::GetInstance(), this);
 
         ShowWindow(hWnd, SW_SHOWDEFAULT);
@@ -129,8 +135,8 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         //mouse messages
     case WM_MOUSEMOVE: {
         POINT pt;
-        pt.x = GET_X_LPARAM(lParam);
-        pt.y = GET_Y_LPARAM(lParam);
+        GetCursorPos(&pt);
+        ScreenToClient(hWnd, &pt);
         mouse.OnMouseMove(pt.x, pt.y);
         break;
     }

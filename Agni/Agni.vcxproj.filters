@@ -85,6 +85,12 @@
     <Filter Include="Source Files\Camera">
       <UniqueIdentifier>{75069342-dde4-4d6d-960e-7040b57918fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\DearImGui">
+      <UniqueIdentifier>{15660ba8-c98c-44a2-842a-a9418bf295ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DearImGui">
+      <UniqueIdentifier>{f91756a1-dc1d-4816-baf0-86a7d0367b25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -228,6 +234,9 @@
     <ClInclude Include="Skybox.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="DearImGui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Agni.cpp">
@@ -343,6 +352,9 @@
     </ClCompile>
     <ClCompile Include="Rasterizer.cpp">
       <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="DearImGui.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

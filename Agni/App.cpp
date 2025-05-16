@@ -64,12 +64,11 @@ void App::DoFrame()
 	bool opened = true;
 	ImGui::SetNextWindowSize(ImVec2(1280 / 6, 720 / 8));
 	ImGui::SetNextWindowPos(ImVec2(1280 - (1280 / 6),0.0f));
-	float x = window.mouse.GetPosX();
-	float y = window.mouse.GetPosY();
+	
 
 	if (ImGui::Begin("Agni Editor", &opened, ImGuiWindowFlags_NoResize| ImGuiWindowFlags_NoCollapse)) {
-		ImGui::Text("Mouse X: %.1f, Mouse Y: %.1f",x , y);
-		ImGui::Text("Mouse X: %.1f, Mouse Y: %.1f", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
+		ImGui::Text("Mouse X: %i, Mouse Y: %i", window.mouse.GetPosX(), window.mouse.GetPosY());
+		ImGui::Text("Mouse X: %i, Mouse Y: %i", (int)ImGui::GetIO().MousePos.x, (int)ImGui::GetIO().MousePos.y);
 		ImGui::SliderFloat("Speed", &speed_factor, 0.0f, 10.0f, "%.1f");
 	}
 	//light

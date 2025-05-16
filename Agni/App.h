@@ -7,6 +7,7 @@
 #include "Box.h"
 #include "Plane.h"
 #include "Cube.h"
+#include "DearImGui.h"
 #include "PointLight.h"
 #include "Skybox.h"
 class App
@@ -18,6 +19,7 @@ private:
 	void DoFrame();
 private:
 	Window window;
+	DearImGui dearImGui;
 	Camera cam;
 	AgniTimer timer;
 	PointLight light;
