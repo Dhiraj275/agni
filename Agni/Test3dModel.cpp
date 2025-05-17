@@ -23,7 +23,7 @@ Model3d::Model3d(Graphics& gfx, float x, float y, float z, float speed, float an
 
         Assimp::Importer imp;
 
-        const auto pModel = imp.ReadFile("Models\\car.obj",
+        const auto pModel = imp.ReadFile("Models\\suzanne.obj",
             aiProcess_Triangulate |
             aiProcess_JoinIdenticalVertices |
             aiProcess_GenNormals);  // Generate normals if missing
@@ -97,7 +97,13 @@ void Model3d::Update(float dt) noexcept
 	angle += 1.0f * dt;
 }
 void Model3d::SpawnController() {
-    if (ImGui::Begin("Model Controller")) {
+    bool opened = true;    
+    ImGui::SetNextWindowSize(ImVec2(1280.0f / 6, 720.0 / 3.80f));
+
+    ImGui::SetNextWindowPos(ImVec2(0.0f, (720.0 / 3) + (720.0 / 5)));
+
+
+    if (ImGui::Begin("Model Controller", &opened, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
         ImGui::SliderFloat("X", &x, -10.0f, 10.0f, "%.2f");
         ImGui::SliderFloat("Y", &y, -10.0f, 10.0f, "%.2f");
         ImGui::SliderFloat("Z", &z, -10.0f, 10.0f, "%.2f");
