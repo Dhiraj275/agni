@@ -9,6 +9,7 @@
 #include "Cube.h"
 #include "DearImGui.h"
 #include "PointLight.h"
+#include "GeoSphere.h"
 #include "Skybox.h"
 class App
 {
@@ -26,6 +27,7 @@ private:
 	//std::unique_ptr<class Skybox> skybox;
 	std::vector<std::unique_ptr<class Box >> boxes;
 	std::unique_ptr<class Sphere> sphere;
+	std::unique_ptr<class GeoSphere> geoSphere;
 	std::unique_ptr<class Model3d> model;
 	std::unique_ptr<class Plane> plane;
 	std::unique_ptr<class Cube> cube;

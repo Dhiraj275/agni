@@ -91,6 +91,12 @@
     <Filter Include="Header Files\DearImGui">
       <UniqueIdentifier>{f91756a1-dc1d-4816-baf0-86a7d0367b25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Scene Graph">
+      <UniqueIdentifier>{ae691936-9065-43d8-9af6-b39de5a0fd5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene Graph">
+      <UniqueIdentifier>{9880beae-0309-41a1-bac1-e7c2df67b083}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -171,7 +177,7 @@
     <ClInclude Include="TransformCBuf.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="Sphere.h">
+    <ClInclude Include="GeoSphere.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="DrawableBase.h">
@@ -235,7 +241,19 @@
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="DearImGui.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\DearImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files\Scene Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="StructuredBuffer.h">
+      <Filter>Header Files\Bindable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -296,7 +314,7 @@
     <ClCompile Include="TransformCBuf.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="Sphere.cpp">
+    <ClCompile Include="GeoSphere.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui.cpp">
@@ -354,7 +372,19 @@
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="DearImGui.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\DearImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Scene Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="StructuredBuffer.cpp">
+      <Filter>Source Files\Bindable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -411,6 +441,9 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="SkyboxVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="ComputeShader.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

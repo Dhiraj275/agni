@@ -14,7 +14,7 @@ Sphere::Sphere(Graphics& gfx, float x, float y, float z, float radius)
     };
 
     // Parameters for sphere generation
-    const int latDiv =12;  // Latitude divisions
+    const int latDiv = 12;  // Latitude divisions
     const int longDiv = 24; // Longitude divisions
 
     std::vector<Vertex> vertices;

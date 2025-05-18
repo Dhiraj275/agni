@@ -23,10 +23,9 @@ Model3d::Model3d(Graphics& gfx, float x, float y, float z, float speed, float an
 
         Assimp::Importer imp;
 
-        const auto pModel = imp.ReadFile("Models\\suzanne.obj",
-            aiProcess_Triangulate |
-            aiProcess_JoinIdenticalVertices |
-            aiProcess_GenNormals);  // Generate normals if missing
+        const auto pModel = imp.ReadFile("Models\\nanosuit.obj",
+            aiProcess_GenNormals | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate
+        );  // Generate normals if missing
 
         if (!pModel || !pModel->HasMeshes()) {
             throw std::runtime_error("Failed to load model or no meshes found.");

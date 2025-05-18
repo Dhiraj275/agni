@@ -34,8 +34,8 @@ App::App() :
 		));
 	}
 	DirectX::XMFLOAT3 materialColor = { cdist(rng), cdist(rng), cdist(rng) };
-
-	model = std::make_unique<Model3d>(window.Gfx(),4.0f, 0 ,0,0,0,materialColor);
+	geoSphere = std::make_unique<class GeoSphere>(window.Gfx(), 0.0f, 0.0f, 0.0f, 10.0f);
+	
 	window.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 500.0f));
 	
 }
@@ -63,6 +63,8 @@ void App::DoFrame()
 		drawable->Update(dt);
 		drawable->Draw(gfx);
 	}
+	geoSphere->Update(dt);
+	geoSphere->Draw(gfx);
 	bool opened = true;
 	ImGui::SetNextWindowSize(ImVec2(1280 / 6, 720 / 8));
 	ImGui::SetNextWindowPos(ImVec2(1280 - (1280 / 6),0.0f));
@@ -73,16 +75,16 @@ void App::DoFrame()
 		ImGui::Text("Mouse X: %i, Mouse Y: %i", (int)ImGui::GetIO().MousePos.x, (int)ImGui::GetIO().MousePos.y);
 		ImGui::SliderFloat("Speed", &speed_factor, 0.0f, 10.0f, "%.1f");
 	}
-	model->SpawnController();
-	model->Update(dt);
-	model->Draw(gfx);
+
+	
 	//light
 	light.SpawnControlWindow();
 	light.Draw(gfx);
+	
 	//camera
 	cam.SpawnCameraController();
 	cam.Update(0);
 	//present
 	ImGui::End();
 	window.Gfx().EndFrame();
-} 
+}   

@@ -1,30 +1,41 @@
 #pragma once
+//#include "GeoSphere.h"
 #include "BindableBase.h"
 #include "GraphicsThrowMacros.h"
 
 class VertexBuffer : public Bindable
 {
 public:
-	template<class V>
-	VertexBuffer( Graphics& gfx,const std::vector<V>& vertices )
-		:
-		stride( sizeof( V ) )
-	{
-		INFOMAN( gfx );
+    template<class V>
+    VertexBuffer(Graphics& gfx, const std::vector<V>& vertices)
+        :
+        stride(sizeof(V))
+    {
+        INFOMAN(gfx);
 
-		D3D11_BUFFER_DESC bd = {};
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.CPUAccessFlags = 0u;
-		bd.MiscFlags = 0u;
-		bd.ByteWidth = UINT( sizeof( V ) * vertices.size() );
-		bd.StructureByteStride = sizeof( V );
-		D3D11_SUBRESOURCE_DATA sd = {};
-		sd.pSysMem = vertices.data();
-		GFX_THROW_INFO( GetDevice( gfx )->CreateBuffer( &bd,&sd,&pVertexBuffer ) );
-	}
-	void Bind( Graphics& gfx ) noexcept override;
+        D3D11_BUFFER_DESC bd = {};
+        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bd.Usage = D3D11_USAGE_DYNAMIC;
+        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        bd.MiscFlags = 0u;
+        bd.ByteWidth = UINT(sizeof(V) * vertices.size());
+        bd.StructureByteStride = sizeof(V);
+
+        D3D11_SUBRESOURCE_DATA sd = {};
+        sd.pSysMem = vertices.data();
+
+        GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, &sd, &pVertexBuffer));
+    }
+
+    void Bind(Graphics& gfx) noexcept override;
+
+    template<class V>
+    void Update(Graphics& gfx, const std::vector<V>& vertices)
+    {
+
+    }
+
 protected:
-	UINT stride;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
+    UINT stride;
+    Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
 };

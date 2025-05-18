@@ -42,7 +42,6 @@ void PointLight::Bind(Graphics& gfx) const noexcept
 
 void PointLight::Draw(Graphics& gfx) noexcept
 {
-	static DirectX::XMFLOAT3 color = { 1.0f, 1.0f, 1.0f };
 	sphere = std::make_unique<Sphere>(gfx,0.0f, 0.0f, 0.0f, 0.5f);
 	sphere->SetPos(pos);
 	sphere->Draw(gfx);

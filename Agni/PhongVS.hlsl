@@ -18,5 +18,6 @@ VSOut main(float3 pos : Position, float3 n : Normal)
     vso.worldPos = (float3) mul(float4(pos, 1.0f), modelView);
     vso.normal = mul(n, (float3x3) modelView);
     vso.pos = mul(float4(pos, 1.0f), modelViewProj);
+    //vso.pos.y = 1 + sin(pos.y * 5.0f);
     return vso;
 }
