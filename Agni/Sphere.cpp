@@ -18,7 +18,7 @@ Sphere::Sphere(Graphics& gfx, float x, float y, float z, float radius)
     const int longDiv = 24; // Longitude divisions
 
     std::vector<Vertex> vertices;
-    std::vector<unsigned short> indices;
+    std::vector<uint32_t> indices;
 
     // Reserve space
     vertices.reserve((latDiv + 1) * (longDiv + 1));
@@ -45,10 +45,10 @@ Sphere::Sphere(Graphics& gfx, float x, float y, float z, float radius)
     indices.reserve(latDiv * longDiv * 6);
     for (int i = 0; i < latDiv; i++) {
         for (int j = 0; j < longDiv; j++) {
-            int current = i * (longDiv + 1) + j;
-            int next = current + 1;
-            int bottom = current + (longDiv + 1);
-            int bottomNext = bottom + 1;
+            uint32_t current = i * (longDiv + 1) + j;
+            uint32_t next = current + 1;
+            uint32_t bottom = current + (longDiv + 1);
+            uint32_t bottomNext = bottom + 1;
 
             // Two triangles per quad
             indices.push_back(current);

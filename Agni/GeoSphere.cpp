@@ -1,8 +1,33 @@
-#include "GeoSphere.h"
+﻿#include "GeoSphere.h"
 #include "TransformCBuf.h"
 #include "DynamicVertexBuffer.h"
 #include <cmath>
+#include "ImGui/imgui.h"
+#include "PerlinNoise.h"
+#include <algorithm>
 namespace dx = DirectX;
+PerlinNoise3D noiseGen(2025);
+float FractalNoise(dx::XMFLOAT3 pos, dx::XMFLOAT3 freq, float amp)
+{
+    float noiseSum = 0;
+    float amplitude = amp;
+    dx::XMFLOAT3 frequency = freq;
+    for (int i = 0;i < 5;i++) {
+        noiseSum += noiseGen.Noise(pos.x* frequency.x, pos.y* frequency.y, pos.z* frequency.z) * amplitude;
+        frequency = {frequency.x*2,frequency.y * 2,frequency.z * 2};
+        amplitude *= 0.0f;
+    }
+    return noiseSum;
+    // value in [-1, 1]
+}
+dx::XMFLOAT3 LerpColor(const dx::XMFLOAT3& c1, const dx::XMFLOAT3& c2, float t)
+{
+    return {
+        c1.x + (c2.x - c1.x) * t,
+        c1.y + (c2.y - c1.y) * t,
+        c1.z + (c2.z - c1.z) * t
+    };
+}
 DirectX::XMFLOAT3 Lerp(const dx::XMFLOAT3& a, const dx::XMFLOAT3& b, float t) {
     dx::XMVECTOR va = dx::XMLoadFloat3(&a);
     dx::XMVECTOR vb = dx::XMLoadFloat3(&b);
@@ -14,7 +39,7 @@ DirectX::XMFLOAT3 Lerp(const dx::XMFLOAT3& a, const dx::XMFLOAT3& b, float t) {
 GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
     : x(x), y(y), z(z), radius(radius)
 {   
-    std::vector<unsigned short> indices;
+    std::vector<uint32_t> indices;
     
     static const std::vector<Vertex> verticesPair = {
     {{  0.0f,  1.0f,  0.0f }},  // 0: Top
@@ -36,7 +61,7 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
      5, 1, 4   // Bottom back-right
     };
     
-    int N = 15;
+    int N = 120;
 
     for (int triangle = 0; triangle < indicesPair.size(); triangle += 3) {
         dx::XMFLOAT3 v0 = verticesPair[indicesPair[triangle]].pos;
@@ -56,17 +81,53 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
                 dx::XMFLOAT3 point = Lerp(left, right, s);
                 // Normalize to push onto sphere
                 dx::XMVECTOR p = dx::XMLoadFloat3(&point);
-              
-                p = dx::XMVectorScale(dx::XMVector3Normalize(p), radius);
+                // Deformation
+                float height = 1.0f + sinf(point.y * 5) * 0.05f;
+
+                float noise = FractalNoise(point, noiseStrength, amp);
+                if (noise < radius * 0.95f) {
+                    noise -= 0.5f;
+                }
+                float finalHeight = (noise) + radius * height;
+
+                // Normalize and scale
+                p = dx::XMVectorScale(dx::XMVector3Normalize(p), finalHeight);
                 dx::XMStoreFloat3(&point, p);
 
                 dx::XMFLOAT3 normal;
                 dx::XMStoreFloat3(&normal, p);
+                dx::XMFLOAT3 color;
+                dx::XMFLOAT3 waterColor = { 0.1f, 0.3f, 0.8f }; // Deep Blue  
+                dx::XMFLOAT3 grassColor = { 0.2f, 0.7f, 0.3f }; // Green  
+                dx::XMFLOAT3 dirtColor = { 0.5f, 0.3f, 0.1f }; // Brown  
+                dx::XMFLOAT3 snowColor = { 1.0f, 1.0f, 1.0f }; // White 
+                const float waterLevel = radius * 0.95f;
+                const float grassLevel = radius * 1.00f;
+                const float dirtLevel = radius * 1.05f;
+                if (finalHeight < waterLevel)
+                {
+                    color = waterColor;
+                }
+                else if (finalHeight < grassLevel)
+                {
+                    float t = (finalHeight - waterLevel) / (grassLevel - waterLevel);
+                    color = LerpColor(waterColor, grassColor, t);
+                }
+                else if (finalHeight < dirtLevel)
+                {
+                    float t = (finalHeight - grassLevel) / (dirtLevel - grassLevel);
+                    color = LerpColor(grassColor, dirtColor, t);
+                }
+                else
+                {
+                    float t = (finalHeight - dirtLevel) / (radius * 0.1f); // arbitrary snow transition
+                    color = LerpColor(dirtColor, snowColor, std::min(t, 1.0f));
+                }
 
-                vertices.push_back({ point, normal });
-                baseVertices.push_back({ point, normal });
 
-                unsigned short idx = static_cast<unsigned short>(vertices.size() - 1);
+                vertices.push_back({ point, normal, color });
+
+                uint32_t idx = static_cast<uint32_t>(vertices.size() - 1);
                 indexGrid[i].push_back(idx);
             }
         }
@@ -92,8 +153,8 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
         }
     }
     // Add bindings similar to Box class
-    vertexBuffer = std::make_unique<VertexBuffer>(gfx, vertices);
-    AddBind(std::move(vertexBuffer));
+    AddBind(std::make_unique<VertexBuffer>(gfx, vertices));
+    //AddBind(std::move(vertexBuffer));
     auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
     auto pvsbc = pvs->GetBytecode();
     AddBind(std::move(pvs));
@@ -107,11 +168,12 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
     const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
         { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12u, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "Color", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24u, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
     AddBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
     AddBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-    AddStaticBind(std::make_unique<Rasterizer>(gfx,D3D11_CULL_NONE));
+    AddStaticBind(std::make_unique<Rasterizer>(gfx,D3D11_CULL_BACK));
 
     // Transform
     AddBind(std::make_unique<TransformCBuf>(gfx, *this));
@@ -120,7 +182,7 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
         float padding = 0.0f;
     };
     MaterialColorConstantBuffer mc = {
-        {1.0f, 0.0f, 0.0f},
+        {0.8f, 0.8f, 0.8f},
         0.0f
     };
     AddBind(std::make_unique<PixelConstantBuffer<MaterialColorConstantBuffer>>(gfx, mc, 1u));
@@ -130,29 +192,59 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
     //buffer->BindUAV(gfx);
     //AddBind(std::move(buffer));
 
+  
 }
 
 void GeoSphere::Update(float dt) noexcept
 {
-    for (auto& v : vertices)
+  
+    for (size_t i = 0; i < vertices.size(); i++)
     {
-        // Load the position as an XMVECTOR
-        dx::XMVECTOR p = dx::XMLoadFloat3(&v.pos);
+        // Load the position
+        dx::XMFLOAT3 vertex = vertices[i].pos;
+        dx::XMVECTOR p = dx::XMLoadFloat3(&vertex);
 
-        // Compute the height based on the y coordinate
-        float height = 1.0f + sinf(v.pos.y * 25.0f) * 0.05f;
+        // Deformation
+        float height = 1.0f + sinf(vertex.y * testValue) * 0.05f;
+        float noise = FractalNoise(vertex, noiseStrength, amp);
+        float finalHeight = (noise)+radius * height;
 
-        // Scale the normalized position vector by radius * height
-        p = dx::XMVectorScale(dx::XMVector3Normalize(p), radius * height);
+        // Normalize and scale
+        p = dx::XMVectorScale(dx::XMVector3Normalize(p), finalHeight);
+        dx::XMStoreFloat3(&vertices[i].pos, p);
 
-        // Store the result back into the vertex
-        dx::XMStoreFloat3(&v.pos, p);
+        dx::XMFLOAT3 color;
+        dx::XMFLOAT3 waterColor = { 0.1f, 0.3f, 0.8f }; // Deep Blue  
+        dx::XMFLOAT3 grassColor = { 0.2f, 0.7f, 0.3f }; // Green  
+        dx::XMFLOAT3 dirtColor = { 0.5f, 0.3f, 0.1f }; // Brown  
+        dx::XMFLOAT3 snowColor = { 1.0f, 1.0f, 1.0f }; // White 
+        const float waterLevel = radius * 0.95f;
+        const float grassLevel = radius * 1.00f;
+        const float dirtLevel = radius * 1.05f;
+        if (finalHeight < waterLevel)
+        {
+            color = waterColor;
+        }
+        else if (finalHeight < grassLevel)
+        {
+            float t = (finalHeight - waterLevel) / (grassLevel - waterLevel);
+            color = LerpColor(waterColor, grassColor, t);
+        }
+        else if (finalHeight < dirtLevel)
+        {
+            float t = (finalHeight - grassLevel) / (dirtLevel - grassLevel);
+            color = LerpColor(grassColor, dirtColor, t);
+        }
+        else
+        {
+            float t = (finalHeight - dirtLevel) / (radius * 0.1f); // arbitrary snow transition
+            color = LerpColor(dirtColor, snowColor, 1.0f);
+        }
+        vertices[i].color = color;
     }
+
 }
-void GeoSphere::Update(Graphics&gfx)
-{
-    
-}
+
 
 DirectX::XMMATRIX GeoSphere::GetTransformXM() const noexcept
 {
@@ -170,4 +262,28 @@ void GeoSphere::SetPos(DirectX::XMFLOAT3 pos) noexcept
     x = pos.x;
     y = pos.y;
     z = pos.z;
+}
+
+void GeoSphere::SpawnControlWindow() noexcept
+{
+    bool opened = true;
+
+    //ImGui::SetNextWindowSize(ImVec2(1280.0f / 6, 720.0 / 3));
+    ImGui::SetNextWindowSize(ImVec2(1280.0f / 6, 720.0 / 3.80f));
+
+    ImGui::SetNextWindowPos(ImVec2(0.0f, (720.0 / 3) + (720.0 / 5)));
+
+
+    if (ImGui::Begin("Model"))
+    {
+        ImGui::SliderFloat("Test Value", &testValue, 0.0f, 5.0f);
+        ImGui::SliderFloat("Amplitude", &amp, 0.0f, 5.0f);
+        ImGui::SliderFloat("Noise X", &noiseStrength.x, 0.0f, 5.0f);
+        ImGui::SliderFloat("Noise Y", &noiseStrength.y, 0.0f, 5.0f);
+        ImGui::SliderFloat("Noise Z", &noiseStrength.z, 0.0f, 5.0f);
+
+    }
+    ImGui::End();
+
+
 }

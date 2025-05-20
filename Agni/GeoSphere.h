@@ -6,19 +6,22 @@ public:
     struct Vertex {
         DirectX::XMFLOAT3 pos;
         DirectX::XMFLOAT3 normal;
+        DirectX::XMFLOAT3 color;
     };
     GeoSphere(Graphics& gfx, float x, float y, float z, float radius);
     void Update(float dt) noexcept override;
-    void Update(Graphics& gfx);
     DirectX::XMMATRIX GetTransformXM() const noexcept override;
     std::vector<Vertex> GetVertices() const;
     void SetPos(DirectX::XMFLOAT3 pos) noexcept;
+    void SpawnControlWindow() noexcept;
 private:
     // Generate sphere vertices and indices
    
     std::vector<Vertex> vertices;
-    std::vector<Vertex> baseVertices;
     std::unique_ptr<VertexBuffer> vertexBuffer;
+    DirectX::XMFLOAT3 noiseStrength = {8,4, 2};
+    float amp = 4.0f;
+    float testValue= 0.0f;
     float x;
     float y;
     float z;

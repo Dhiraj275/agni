@@ -17,7 +17,9 @@ void TransformCBuf::Bind(Graphics& gfx) noexcept
 	const auto modelView = parent.GetTransformXM()*gfx.GetCamera();
 	const Transforms tf =
 	{
-		DirectX::XMMatrixTranspose(modelView),
+		DirectX::XMMatrixTranspose(
+			parent.GetTransformXM() * gfx.GetProjection()
+		),
 		DirectX::XMMatrixTranspose(
 			modelView *
 			gfx.GetProjection()

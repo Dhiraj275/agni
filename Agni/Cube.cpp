@@ -38,7 +38,7 @@ Cube::Cube(Graphics& gfx, float x, float y, float z, float speed, float angle, D
 
 		AddStaticBind(std::make_unique<PixelShader>(gfx, L"SolidPS.cso"));
 
-		const std::vector<unsigned short> indices = {
+		const std::vector<uint32_t> indices = {
 		0,2,1, 2,3,1,
 		1,3,5, 3,7,5,
 		2,6,3, 3,6,7,

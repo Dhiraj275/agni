@@ -163,6 +163,7 @@
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="DrawableBase.h" />
     <ClInclude Include="DxgiInfoManager.h" />
+    <ClInclude Include="DynamicVertexBuffer.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsThrowMacros.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Rasterizer.h" />
@@ -214,6 +216,7 @@
     <ClCompile Include="DearImGui.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
+    <ClCompile Include="DynamicVertexBuffer.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="ImGuiManager.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />

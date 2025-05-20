@@ -42,6 +42,9 @@ void Camera::SpawnCameraController()
         if (ImGui::Button("Reset")) {
             ResetCamera();
         }
+        if (ImGui::Button("Planet View")) {
+            SetCamPlanetView();
+        }
     }
     ImGui::End();
 
@@ -56,6 +59,17 @@ void Camera::ResetCamera()
     pitch = 0.0f;
     yaw = 0.0f;
     roll = 0.0f;
+}
+
+void Camera::SetCamPlanetView()
+{
+    r = 10.173f;
+    theta = (-71.0f)*PI/180;
+    phi = 0.0f;
+    //orientation
+    pitch = (90.0f) * PI / 180;
+    yaw = (-56.0f) * PI / 180;
+    roll = (-26.0f) * PI / 180;
 }
 
 void Camera::Update(float dt)

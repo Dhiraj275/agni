@@ -74,7 +74,7 @@ Box::Box(Graphics& gfx,
 
 		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
 
-		const std::vector<unsigned short> indices =
+		const std::vector<uint32_t> indices =
 		{
 			// Near face (-Z)
 			0, 2, 1,  2, 3, 1,

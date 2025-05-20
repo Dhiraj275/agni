@@ -9,6 +9,8 @@ public:
 	void Bind(Graphics& gfx) noexcept override;
 private:
 	const GeoSphere& parent;
-	std::unique_ptr<VertexBuffer> pVertexBuffer;
+	UINT stride;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
+
 
 };

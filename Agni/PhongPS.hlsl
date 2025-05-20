@@ -14,7 +14,7 @@ static const float attConst = 1.0f;
 static const float attLin = 0.045f;
 static const float attQuad = 0.0075f;
 
-float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
+float4 main(float3 worldPos : Position, float3 n : Normal, float3 color : Color) : SV_Target
 {
 	// fragment to light vector data
     const float3 vToL = lightPos - worldPos;
@@ -31,5 +31,5 @@ float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
 
     
     // final color
-    return float4(materialColor * saturate(diffuse + ambient + specular), 1.0f);
+    return float4(color * saturate(diffuse + ambient + specular), 1.0f);
 }

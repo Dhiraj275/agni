@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include "AgniException.h"
 #include "DxgiInfoManager.h"
 #include "ImGuiManager.h"

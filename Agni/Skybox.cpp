@@ -85,7 +85,7 @@ Skybox::Skybox(Graphics& gfx)
 
 		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PlanePS.cso"));
 
-		const std::vector<unsigned short> indices = {
+		const std::vector<uint32_t> indices = {
 			// Front face
 			0, 1, 2, 0, 2, 3,
 			// Back face

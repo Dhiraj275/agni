@@ -81,7 +81,7 @@ Plane::Plane(Graphics& gfx, float x, float y, float z, float speed, float angle)
 
 		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PlanePS.cso"));
 
-		const std::vector<unsigned short> indices = {
+		const std::vector<uint32_t> indices = {
 			// Front face
 			0, 1, 2, 0, 2, 3,
 			// Back face

@@ -255,6 +255,12 @@
     <ClInclude Include="StructuredBuffer.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="DynamicVertexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PerlinNoise.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Agni.cpp">
@@ -385,6 +391,9 @@
     </ClCompile>
     <ClCompile Include="StructuredBuffer.cpp">
       <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicVertexBuffer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -78,6 +78,7 @@ void App::DoFrame()
 
 	
 	//light
+	geoSphere->SpawnControlWindow();
 	light.SpawnControlWindow();
 	light.Draw(gfx);
 	

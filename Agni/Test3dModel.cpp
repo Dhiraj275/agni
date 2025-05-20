@@ -43,7 +43,7 @@ Model3d::Model3d(Graphics& gfx, float x, float y, float z, float speed, float an
         // Pixel shader
         AddStaticBind(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
         std::vector<Vertex> vertices;  // Use Vertex, not VertexBuffer
-        std::vector<unsigned short> indices;
+        std::vector<uint32_t> indices;
         unsigned int vertexOffset = 0;
         for (unsigned int m = 0; m < pModel->mNumMeshes; ++m) {
             const auto pMesh = pModel->mMeshes[m];
