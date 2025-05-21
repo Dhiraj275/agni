@@ -18,6 +18,6 @@ private:
 	};
 	std::unique_ptr<class Sphere> sphere;
 private:
-	DirectX::XMFLOAT3 pos = { 0.0f,0.0f,0.0f };
+	DirectX::XMFLOAT3 pos = { 0.0f,42.0f,0.0f };
 	mutable PixelConstantBuffer<PointLightCBuf> cbuf;
 };

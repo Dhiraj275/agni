@@ -1,5 +1,5 @@
 #include "DynamicVertexBuffer.h"
-DynamicVertexBuffer::DynamicVertexBuffer(Graphics& gfx, GeoSphere& parent)
+DynamicVertexBuffer::DynamicVertexBuffer(Graphics& gfx, Terrain& parent)
 	:parent(parent),
 	stride(sizeof(GeoSphere::Vertex))
 {

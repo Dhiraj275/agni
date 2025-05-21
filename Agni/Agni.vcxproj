@@ -164,9 +164,11 @@
     <ClInclude Include="DrawableBase.h" />
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="DynamicVertexBuffer.h" />
+    <ClInclude Include="FractalNoise.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsThrowMacros.h" />
+    <ClInclude Include="HelperMath.h" />
     <ClInclude Include="ImGuiManager.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
@@ -187,6 +189,7 @@
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="GeoSphere.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="Test3dModel.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TransformCBuf.h" />
@@ -241,6 +244,7 @@
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="GeoSphere.cpp" />
     <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Test3dModel.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TransformCBuf.cpp" />

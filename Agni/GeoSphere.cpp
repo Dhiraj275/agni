@@ -4,38 +4,11 @@
 #include <cmath>
 #include "ImGui/imgui.h"
 #include "PerlinNoise.h"
+#include "HelperMath.h"
+#include "FractalNoise.h"
 #include <algorithm>
 namespace dx = DirectX;
-PerlinNoise3D noiseGen(2025);
-float FractalNoise(dx::XMFLOAT3 pos, dx::XMFLOAT3 freq, float amp)
-{
-    float noiseSum = 0;
-    float amplitude = amp;
-    dx::XMFLOAT3 frequency = freq;
-    for (int i = 0;i < 5;i++) {
-        noiseSum += noiseGen.Noise(pos.x* frequency.x, pos.y* frequency.y, pos.z* frequency.z) * amplitude;
-        frequency = {frequency.x*2,frequency.y * 2,frequency.z * 2};
-        amplitude *= 0.0f;
-    }
-    return noiseSum;
-    // value in [-1, 1]
-}
-dx::XMFLOAT3 LerpColor(const dx::XMFLOAT3& c1, const dx::XMFLOAT3& c2, float t)
-{
-    return {
-        c1.x + (c2.x - c1.x) * t,
-        c1.y + (c2.y - c1.y) * t,
-        c1.z + (c2.z - c1.z) * t
-    };
-}
-DirectX::XMFLOAT3 Lerp(const dx::XMFLOAT3& a, const dx::XMFLOAT3& b, float t) {
-    dx::XMVECTOR va = dx::XMLoadFloat3(&a);
-    dx::XMVECTOR vb = dx::XMLoadFloat3(&b);
-    dx::XMVECTOR result = dx::XMVectorLerp(va, vb, t);  // built-in for XMVECTOR
-    dx::XMFLOAT3 out;
-    dx::XMStoreFloat3(&out, result);
-    return out;
-}
+
 GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
     : x(x), y(y), z(z), radius(radius)
 {   
@@ -61,7 +34,7 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
      5, 1, 4   // Bottom back-right
     };
     
-    int N = 120;
+    int N = 60;
 
     for (int triangle = 0; triangle < indicesPair.size(); triangle += 3) {
         dx::XMFLOAT3 v0 = verticesPair[indicesPair[triangle]].pos;
@@ -88,7 +61,7 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
                 if (noise < radius * 0.95f) {
                     noise -= 0.5f;
                 }
-                float finalHeight = (noise) + radius * height;
+                float finalHeight = (noise+radius)*height;
 
                 // Normalize and scale
                 p = dx::XMVectorScale(dx::XMVector3Normalize(p), finalHeight);
@@ -124,7 +97,7 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
                     color = LerpColor(dirtColor, snowColor, std::min(t, 1.0f));
                 }
 
-
+                color = { noise,noise,noise };
                 vertices.push_back({ point, normal, color });
 
                 uint32_t idx = static_cast<uint32_t>(vertices.size() - 1);
@@ -154,6 +127,8 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
     }
     // Add bindings similar to Box class
     AddBind(std::make_unique<VertexBuffer>(gfx, vertices));
+    //AddBind(std::make_unique<DynamicVertexBuffer>(gfx, *this));
+
     //AddBind(std::move(vertexBuffer));
     auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
     auto pvsbc = pvs->GetBytecode();
@@ -207,7 +182,7 @@ void GeoSphere::Update(float dt) noexcept
         // Deformation
         float height = 1.0f + sinf(vertex.y * testValue) * 0.05f;
         float noise = FractalNoise(vertex, noiseStrength, amp);
-        float finalHeight = (noise)+radius * height;
+        float finalHeight = radius * height;
 
         // Normalize and scale
         p = dx::XMVectorScale(dx::XMVector3Normalize(p), finalHeight);
@@ -240,6 +215,8 @@ void GeoSphere::Update(float dt) noexcept
             float t = (finalHeight - dirtLevel) / (radius * 0.1f); // arbitrary snow transition
             color = LerpColor(dirtColor, snowColor, 1.0f);
         }
+        color = { noise,noise,noise };
+
         vertices[i].color = color;
     }
 

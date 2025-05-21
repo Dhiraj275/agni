@@ -8,6 +8,4 @@
 #include "VertexShader.h"
 #include "Sampler.h"
 #include "Texture.h"
-#include "ComputeShader.h"
-#include "StructuredBuffer.h"
 #include "Rasterizer.h"

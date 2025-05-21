@@ -19,8 +19,8 @@ private:
    
     std::vector<Vertex> vertices;
     std::unique_ptr<VertexBuffer> vertexBuffer;
-    DirectX::XMFLOAT3 noiseStrength = {8,4, 2};
-    float amp = 4.0f;
+    DirectX::XMFLOAT3 noiseStrength = {1,2,3};
+    float amp = 0.5;
     float testValue= 0.0f;
     float x;
     float y;

@@ -34,8 +34,7 @@ App::App() :
 		));
 	}
 	DirectX::XMFLOAT3 materialColor = { cdist(rng), cdist(rng), cdist(rng) };
-	geoSphere = std::make_unique<class GeoSphere>(window.Gfx(), 0.0f, 0.0f, 0.0f, 10.0f);
-	
+	terrain = std::make_unique<Terrain>(window.Gfx());
 	window.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 500.0f));
 	
 }
@@ -63,22 +62,20 @@ void App::DoFrame()
 		drawable->Update(dt);
 		drawable->Draw(gfx);
 	}
-	geoSphere->Update(dt);
-	geoSphere->Draw(gfx);
+	terrain->Draw(gfx);
+	terrain->Update(dt);
 	bool opened = true;
 	ImGui::SetNextWindowSize(ImVec2(1280 / 6, 720 / 8));
 	ImGui::SetNextWindowPos(ImVec2(1280 - (1280 / 6),0.0f));
 	
 
 	if (ImGui::Begin("Agni Editor", &opened, ImGuiWindowFlags_NoResize| ImGuiWindowFlags_NoCollapse)) {
-		ImGui::Text("Mouse X: %i, Mouse Y: %i", window.mouse.GetPosX(), window.mouse.GetPosY());
-		ImGui::Text("Mouse X: %i, Mouse Y: %i", (int)ImGui::GetIO().MousePos.x, (int)ImGui::GetIO().MousePos.y);
+		ImGui::Text("FPS: %i", (int)ImGui::GetIO().Framerate);
 		ImGui::SliderFloat("Speed", &speed_factor, 0.0f, 10.0f, "%.1f");
 	}
 
 	
 	//light
-	geoSphere->SpawnControlWindow();
 	light.SpawnControlWindow();
 	light.Draw(gfx);
 	

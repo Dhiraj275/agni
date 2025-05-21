@@ -11,6 +11,7 @@
 #include "PointLight.h"
 #include "GeoSphere.h"
 #include "Skybox.h"
+#include "Terrain.h"
 class App
 {
 public:
@@ -30,6 +31,8 @@ private:
 	std::unique_ptr<class GeoSphere> geoSphere;
 	std::unique_ptr<class Model3d> model;
 	std::unique_ptr<class Plane> plane;
+	std::unique_ptr<class Terrain> terrain;
+
 	std::unique_ptr<class Cube> cube;
 
 	float speed_factor=0.0f;
