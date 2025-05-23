@@ -184,7 +184,7 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Rasterizer.h" />
-    <ClInclude Include="StructuredBuffer.h" />
+    <ClInclude Include="ComputeVertexBuffer.h" />
     <ClInclude Include="Sampler.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="GeoSphere.h" />
@@ -239,7 +239,7 @@
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Rasterizer.cpp" />
-    <ClCompile Include="StructuredBuffer.cpp" />
+    <ClCompile Include="ComputeVertexBuffer.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="GeoSphere.cpp" />

@@ -4,7 +4,6 @@
 #include <cmath>
 #include "ImGui/imgui.h"
 #include <algorithm>
-#include "ComputeShader.h"
 namespace dx = DirectX;
 
 Terrain::Terrain(Graphics& gfx)
@@ -21,8 +20,8 @@ Terrain::Terrain(Graphics& gfx)
             float fx = -1.0f + step * x;
             float fy = -1.0f + step * y;
             dx::XMFLOAT3 pos = { fx, 0.0f, fy };
-            float noise = 0;
-            pos = { fx, 0.0f, fy };
+            float noise = FractalNoise(pos,noiseStrength,amp);
+            pos = { fx, noise, fy };
             dx::XMVECTOR p = dx::XMLoadFloat3(&pos);
             p = dx::XMVectorScale(p, 10.0f);
             dx::XMStoreFloat3(&pos, p);
@@ -119,7 +118,6 @@ Terrain::Terrain(Graphics& gfx)
         {0.8f, 0.8f, 0.8f},
         0.0f
     };
-    AddBind(std::make_unique<ComputeShader>(gfx, L"ComputeShader.cso", vertices));
     AddBind(std::make_unique<PixelConstantBuffer<MaterialColorConstantBuffer>>(gfx, mc, 1u));
 
     //auto buffer = std::make_unique<StructuredBuffer>(gfx, vertices, 0u);

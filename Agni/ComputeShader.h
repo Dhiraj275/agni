@@ -1,109 +1,100 @@
 #pragma once
 #include "Bindable.h"
+#include "ComputeVertexBuffer.h"
+#include <exception>
 
+// Compute Shader bindable for organizing compute operations
 class ComputeShader : public Bindable
 {
 public:
-	template<class V>
-	ComputeShader(Graphics& gfx, const std::wstring& path, const std::vector<V>& vector)
-		:
-		vertexCount(vector.size())
-	{
+    ComputeShader(Graphics& gfx, const std::wstring& path, const std::string& entryPoint = "CSMain")
+    {
         INFOMAN(gfx);
 
-        // 1. Create and compile the compute shader
         Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
-        GFX_THROW_INFO(D3DReadFileToBlob(path.c_str(), &pBlob));
+        Microsoft::WRL::ComPtr<ID3DBlob> pErrorBlob;
+
+        GFX_THROW_INFO(D3DCompileFromFile(
+            path.c_str(),
+            nullptr,
+            D3D_COMPILE_STANDARD_FILE_INCLUDE,
+            entryPoint.c_str(),
+            "cs_5_0",
+            D3DCOMPILE_ENABLE_STRICTNESS,
+            0,
+            &pBlob,
+            &pErrorBlob
+        ));
+
         GFX_THROW_INFO(GetDevice(gfx)->CreateComputeShader(
             pBlob->GetBufferPointer(),
             pBlob->GetBufferSize(),
             nullptr,
-            &pComputeShader));
+            &pComputeShader
+        ));
+    }
 
-        // 2. Create the structured buffer with both UAV and SRV flags
-        D3D11_BUFFER_DESC shaderResourceViewBufferDesc = {};
-        shaderResourceViewBufferDesc.ByteWidth = static_cast<UINT>(vector.size() * sizeof(V));
-        shaderResourceViewBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
-        shaderResourceViewBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-        shaderResourceViewBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-        shaderResourceViewBufferDesc.StructureByteStride = sizeof(V);
+    void Bind(Graphics& gfx) noexcept override
+    {
+        GetContext(gfx)->CSSetShader(pComputeShader.Get(), nullptr, 0);
+    }
 
-        D3D11_SUBRESOURCE_DATA initData = {};
-        initData.pSysMem = vector.data();
-        GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(
-            &shaderResourceViewBufferDesc,
-            &initData,
-            pStructuredBuffer.GetAddressOf()));
+    void Dispatch(Graphics& gfx, UINT threadGroupsX, UINT threadGroupsY = 1, UINT threadGroupsZ = 1) noexcept
+    {
+        GetContext(gfx)->Dispatch(threadGroupsX, threadGroupsY, threadGroupsZ);
+    }
 
-        // 3. Create UAV for compute shader to write to
-        D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-        uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-        uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-        uavDesc.Buffer.FirstElement = 0;
-        uavDesc.Buffer.NumElements = static_cast<UINT>(vector.size());
-        GFX_THROW_INFO(GetDevice(gfx)->CreateUnorderedAccessView(
-            pStructuredBuffer.Get(),
-            &uavDesc,
-            pUAV.GetAddressOf()));
-
-        // 4. Also create SRV (uncomment this) - might be needed for binding as input
-        D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-        srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-        srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-        srvDesc.Buffer.ElementOffset = 0;
-        srvDesc.Buffer.NumElements = static_cast<UINT>(vector.size());
-        GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
-            pStructuredBuffer.Get(),
-            &srvDesc,
-            pShaderResourceView.GetAddressOf()));
-
-        // 5. Create constant buffer for vertex count
-        struct Buffer {
-            int vertexCount;
-            float padding;
-            float padding1;
-            float padding2;
-        };
-
-        Buffer buf = { static_cast<int>(vector.size()) };
-
-        D3D11_BUFFER_DESC cbd = {};
-        cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        cbd.Usage = D3D11_USAGE_DYNAMIC;
-        cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        cbd.MiscFlags = 0u;
-        cbd.ByteWidth = sizeof(Buffer);
-        cbd.StructureByteStride = 0u;
-
-        D3D11_SUBRESOURCE_DATA csd = {};
-        csd.pSysMem = &buf;
-        GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&cbd, &csd, &pConstantBuffer));
-
-        // Create a staging buffer for reading data back to CPU
-        D3D11_BUFFER_DESC stagingDesc = {};
-        stagingDesc.Usage = D3D11_USAGE_STAGING;
-        stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-        stagingDesc.BindFlags = 0;
-        stagingDesc.ByteWidth = static_cast<UINT>(vector.size() * sizeof(V));
-        stagingDesc.MiscFlags = 0;
-        stagingDesc.StructureByteStride = sizeof(V);
-
-        GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(
-            &stagingDesc,
-            nullptr,
-            pStagingBuffer.GetAddressOf()));
-	}
-
-	void Bind(Graphics& gfx) noexcept override;
+    // Helper to calculate thread groups based on vertex count
+    static UINT CalculateThreadGroups(UINT vertexCount, UINT threadsPerGroup = 256)
+    {
+        return (vertexCount + threadsPerGroup - 1) / threadsPerGroup;
+    }
 
 protected:
-	Microsoft::WRL::ComPtr<ID3D11ComputeShader> pComputeShader;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pStructuredBuffer;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
-	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView >pUAV;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
-    Microsoft::WRL::ComPtr<ID3D11Buffer> pStagingBuffer;
+    Microsoft::WRL::ComPtr<ID3D11ComputeShader> pComputeShader;
+};
 
+// Usage example combining both classes
+class NoiseProcessor
+{
+private:
+    std::unique_ptr<ComputeVertexBuffer> pVertexBuffer;
+    std::unique_ptr<ComputeShader> pComputeShader;
+    std::unique_ptr<class ConstantBuffer<struct NoiseParams>> pNoiseParams;
 
-	UINT vertexCount;
+public:
+    template<class V>
+    NoiseProcessor(Graphics& gfx, const std::vector<V>& vertices)
+    {
+        pVertexBuffer = std::make_unique<ComputeVertexBuffer>(gfx, vertices);
+        pComputeShader = std::make_unique<ComputeShader>(gfx, L"NoiseCompute.hlsl");
+
+        // Initialize noise parameters (you'd need to define NoiseParams struct)
+        // pNoiseParams = std::make_unique<ConstantBuffer<NoiseParams>>(gfx, 0u);
+    }
+
+    void ApplyNoise(Graphics& gfx, float amplitude, float frequency, float time, float seed)
+    {
+        // Update noise parameters
+        // NoiseParams params = { amplitude, frequency, time, seed };
+        // pNoiseParams->Update(gfx, params);
+
+        // Bind compute shader and resources
+        pComputeShader->Bind(gfx);
+        pVertexBuffer->BindForCompute(gfx, 0u);
+        // pNoiseParams->Bind(gfx);
+
+        // Dispatch compute shader
+        UINT threadGroups = ComputeShader::CalculateThreadGroups(pVertexBuffer->GetVertexCount());
+        pComputeShader->Dispatch(gfx, threadGroups);
+
+        // Clean up
+        pVertexBuffer->UnbindFromCompute(gfx, 0u);
+    }
+
+    // Get the vertex buffer for normal rendering
+    ComputeVertexBuffer& GetVertexBuffer()
+    {
+        return *pVertexBuffer;
+    }
 };
