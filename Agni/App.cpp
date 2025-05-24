@@ -62,8 +62,9 @@ void App::DoFrame()
 		drawable->Update(dt);
 		drawable->Draw(gfx);
 	}
+	terrain->Update(gfx);
 	terrain->Draw(gfx);
-	terrain->Update(dt);
+	terrain->SpawnControlWindow();
 	bool opened = true;
 	ImGui::SetNextWindowSize(ImVec2(1280 / 6, 720 / 8));
 	ImGui::SetNextWindowPos(ImVec2(1280 - (1280 / 6),0.0f));

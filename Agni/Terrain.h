@@ -1,6 +1,7 @@
 #pragma once
 #include "DrawableBase.h"
 #include "PerlinNoise.h"
+#include "NoiseProcessor.h"
 class Terrain: public DrawableBase<Terrain>
 {
     public:
@@ -11,6 +12,7 @@ class Terrain: public DrawableBase<Terrain>
     };
     Terrain(Graphics& gfx);
     void Update(float dt) noexcept override;
+    void Update(Graphics & gfx) noexcept;
     DirectX::XMMATRIX GetTransformXM() const noexcept override;
     std::vector<Vertex> GetVertices() const;
     void SetPos(DirectX::XMFLOAT3 pos) noexcept;
@@ -34,9 +36,10 @@ private:
 private:
     std::vector<uint32_t> indices;
     std::vector<Vertex> vertices;
-    std::unique_ptr<VertexBuffer> vertexBuffer;
-    DirectX::XMFLOAT3 noiseStrength = { 2,2,2 };
-    float amp = 0.5f;
+    std::unique_ptr<ComputeVertexBuffer> vertexBuffer;
+    std::unique_ptr<NoiseProcessor> noiseProcessor;
+    float frequency = 0;
+    float amp = 0;
     float testValue = 0.0f;
     int res = 100;
     float angle = 0;

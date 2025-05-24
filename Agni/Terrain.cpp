@@ -1,6 +1,6 @@
 #include "Terrain.h"
 #include "TransformCBuf.h"
-#include "DynamicVertexBuffer.h"
+#include "ComputeVertexBuffer.h"
 #include <cmath>
 #include "ImGui/imgui.h"
 #include <algorithm>
@@ -20,8 +20,8 @@ Terrain::Terrain(Graphics& gfx)
             float fx = -1.0f + step * x;
             float fy = -1.0f + step * y;
             dx::XMFLOAT3 pos = { fx, 0.0f, fy };
-            float noise = FractalNoise(pos,noiseStrength,amp);
-            pos = { fx, noise, fy };
+            //float noise = FractalNoise(pos,noiseStrength,amp);
+            pos = { fx, 0, fy };
             dx::XMVECTOR p = dx::XMLoadFloat3(&pos);
             p = dx::XMVectorScale(p, 10.0f);
             dx::XMStoreFloat3(&pos, p);
@@ -84,10 +84,9 @@ Terrain::Terrain(Graphics& gfx)
         vertices[i2].normal.y += n.y;
         vertices[i2].normal.z += n.z;
     }
-    // Add bindings similar to Box class
     
 
-    //AddBind(std::move(vertexBuffer));
+
     auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
     auto pvsbc = pvs->GetBytecode();
     AddBind(std::move(pvs));
@@ -104,7 +103,12 @@ Terrain::Terrain(Graphics& gfx)
         { "Color", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24u, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
+    vertexBuffer = std::make_unique<ComputeVertexBuffer>(gfx, vertices);
+
+    noiseProcessor = std::make_unique<NoiseProcessor>(gfx, vertices);
+
     AddBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+
     AddBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
     AddStaticBind(std::make_unique<Rasterizer>(gfx, D3D11_CULL_NONE));
 
@@ -120,12 +124,6 @@ Terrain::Terrain(Graphics& gfx)
     };
     AddBind(std::make_unique<PixelConstantBuffer<MaterialColorConstantBuffer>>(gfx, mc, 1u));
 
-    //auto buffer = std::make_unique<StructuredBuffer>(gfx, vertices, 0u);
-    //buffer->BindUAV(gfx);
-    //AddBind(std::move(buffer));
-
-    //AddBind(std::make_unique<VertexBuffer>(gfx, vertices));
-    AddBind(std::make_unique<DynamicVertexBuffer>(gfx, *this));
 }
 
 void Terrain::Update(float dt) noexcept
@@ -177,6 +175,11 @@ void Terrain::Update(float dt) noexcept
     //}
 }
 
+void Terrain::Update(Graphics& gfx)noexcept {
+    angle += 0.006;
+    noiseProcessor->ApplyNoise(gfx,amp, frequency/10, 0.0f, 42.0f);
+   
+}
 
 DirectX::XMMATRIX Terrain::GetTransformXM() const noexcept
 {
@@ -210,9 +213,9 @@ void Terrain::SpawnControlWindow() noexcept
     {
         ImGui::SliderFloat("Test Value", &testValue, 0.0f, 5.0f);
         ImGui::SliderFloat("Amplitude", &amp, 0.0f, 5.0f);
-        ImGui::SliderFloat("Noise X", &noiseStrength.x, 0.0f, 5.0f);
-        ImGui::SliderFloat("Noise Y", &noiseStrength.y, 0.0f, 5.0f);
-        ImGui::SliderFloat("Noise Z", &noiseStrength.z, 0.0f, 5.0f);
+        ImGui::SliderFloat("Noise X", &frequency, 0.0f, 5.0f);
+        /*ImGui::SliderFloat("Noise Y", &noiseStrength.y, 0.0f, 5.0f);
+        ImGui::SliderFloat("Noise Z", &noiseStrength.z, 0.0f, 5.0f);*/
 
     }
     ImGui::End();

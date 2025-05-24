@@ -97,6 +97,30 @@
     <Filter Include="Source Files\Scene Graph">
       <UniqueIdentifier>{9880beae-0309-41a1-bac1-e7c2df67b083}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Noise">
+      <UniqueIdentifier>{058453d2-94c5-42e4-8535-6e6f4b602cf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HelperMacros">
+      <UniqueIdentifier>{7798416b-1e75-49ae-8e19-c4bdde10240f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Phong">
+      <UniqueIdentifier>{22bfb4d6-7ece-4d2b-b470-99baacd8e517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Solid">
+      <UniqueIdentifier>{ec4d5897-52df-467e-8db6-de7279e779b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Plane">
+      <UniqueIdentifier>{30bdc954-4a66-4a5f-8a9c-def945d315db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Sphere">
+      <UniqueIdentifier>{6e8bd66c-1b7b-4e53-a8c2-c79e2d8e9870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Base">
+      <UniqueIdentifier>{d59ab682-51aa-4168-9916-9086e518fb89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Compute">
+      <UniqueIdentifier>{611373f5-f935-48fc-b4b5-72f9029dac0d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -140,12 +164,6 @@
     </ClInclude>
     <ClInclude Include="VertexShader.h">
       <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsThrowMacros.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowThrowMacros.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IndexBuffer.h">
       <Filter>Header Files\Bindable</Filter>
@@ -255,20 +273,29 @@
     <ClInclude Include="ComputeVertexBuffer.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicVertexBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PerlinNoise.h">
+    <ClInclude Include="HelperMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Terrain.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicVertexBuffer.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="PerlinNoise.h">
+      <Filter>Header Files\Noise</Filter>
     </ClInclude>
     <ClInclude Include="FractalNoise.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Noise</Filter>
     </ClInclude>
-    <ClInclude Include="HelperMath.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="WindowThrowMacros.h">
+      <Filter>Header Files\HelperMacros</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsThrowMacros.h">
+      <Filter>Header Files\HelperMacros</Filter>
+    </ClInclude>
+    <ClInclude Include="NoiseProcessor.h">
+      <Filter>Header Files\Noise</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -431,41 +458,41 @@
     <None Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="VertexShader.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelShader.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="SphereVertexShader.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="SpherePixelShader.hlsl">
-      <Filter>Shader</Filter>
+    <FxCompile Include="PhongVS.hlsl">
+      <Filter>Shader\Phong</Filter>
     </FxCompile>
     <FxCompile Include="PhongPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PhongVS.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\Phong</Filter>
     </FxCompile>
     <FxCompile Include="SolidPS.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\Solid</Filter>
     </FxCompile>
     <FxCompile Include="SolidVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="PlaneVS.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\Solid</Filter>
     </FxCompile>
     <FxCompile Include="PlanePS.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\Plane</Filter>
+    </FxCompile>
+    <FxCompile Include="PlaneVS.hlsl">
+      <Filter>Shader\Plane</Filter>
+    </FxCompile>
+    <FxCompile Include="SpherePixelShader.hlsl">
+      <Filter>Shader\Sphere</Filter>
+    </FxCompile>
+    <FxCompile Include="SphereVertexShader.hlsl">
+      <Filter>Shader\Sphere</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>Shader\Base</Filter>
     </FxCompile>
     <FxCompile Include="SkyboxVS.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\Base</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>Shader\Base</Filter>
     </FxCompile>
     <FxCompile Include="ComputeShader.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\Compute</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

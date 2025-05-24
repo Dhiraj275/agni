@@ -10,4 +10,6 @@ public:
 protected:
 	UINT count;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexStructuredBuffer;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pIndexUAV;
 };
