@@ -1,6 +1,5 @@
 #include "Terrain.h"
 #include "TransformCBuf.h"
-#include "ComputeVertexBuffer.h"
 #include <cmath>
 #include "ImGui/imgui.h"
 #include <algorithm>
@@ -20,8 +19,10 @@ Terrain::Terrain(Graphics& gfx)
             float fx = -1.0f + step * x;
             float fy = -1.0f + step * y;
             dx::XMFLOAT3 pos = { fx, 0.0f, fy };
-            //float noise = FractalNoise(pos,noiseStrength,amp);
-            pos = { fx, 0, fy };
+            dx::XMFLOAT3 color = { 0, 0.0f, 0};
+
+            float noise = FractalNoise(pos,noiseStrength,amp);
+            pos = { fx, noise, fy };
             dx::XMVECTOR p = dx::XMLoadFloat3(&pos);
             p = dx::XMVectorScale(p, 10.0f);
             dx::XMStoreFloat3(&pos, p);
@@ -29,7 +30,7 @@ Terrain::Terrain(Graphics& gfx)
             vertices.push_back({
                 pos,         // Position
                 { 0.0f, 0.0f, 0.0f },     // Normal
-                { 0.6f, 0.6f, 0.6f } // TexCoord
+                color
                 });
         }
     }
@@ -53,38 +54,50 @@ Terrain::Terrain(Graphics& gfx)
             indices.push_back(i3);
         }
     }
-    for (size_t i = 0; i < indices.size(); i += 3)
+    // Backup original data
+    std::vector<Vertex> originalVertices = vertices;
+    std::vector<uint32_t> originalIndices = indices;
+
+    vertices.resize(originalIndices.size()); // One vertex per index
+    indices.resize(originalIndices.size());  // 1:1 mapping
+
+    for (size_t i = 0; i < originalIndices.size(); i += 3)
     {
-        uint32_t i0 = indices[i];
-        uint32_t i1 = indices[i + 1];
-        uint32_t i2 = indices[i + 2];
+        uint32_t i0 = originalIndices[i];
+        uint32_t i1 = originalIndices[i + 1];
+        uint32_t i2 = originalIndices[i + 2];
 
-        dx::XMVECTOR p0 = dx::XMLoadFloat3(&vertices[i0].pos);
-        dx::XMVECTOR p1 = dx::XMLoadFloat3(&vertices[i1].pos);
-        dx::XMVECTOR p2 = dx::XMLoadFloat3(&vertices[i2].pos);
+        dx::XMVECTOR p0 = dx::XMLoadFloat3(&originalVertices[i0].pos);
+        dx::XMVECTOR p1 = dx::XMLoadFloat3(&originalVertices[i1].pos);
+        dx::XMVECTOR p2 = dx::XMLoadFloat3(&originalVertices[i2].pos);
 
-        dx::XMVECTOR v1 = dx::XMVectorSubtract(p1, p0);
-        dx::XMVECTOR v2 = dx::XMVectorSubtract(p2, p0);
-        dx::XMVECTOR normal = dx::XMVector3Cross(v1, v2);
-        normal = dx::XMVector3Normalize(normal);
+        dx::XMVECTOR edge1 = dx::XMVectorSubtract(p1, p0);
+        dx::XMVECTOR edge2 = dx::XMVectorSubtract(p2, p0);
+        dx::XMVECTOR normal = dx::XMVector3Normalize(dx::XMVector3Cross(edge1, edge2));
 
-        dx::XMFLOAT3 n;
-        dx::XMStoreFloat3(&n, normal);
+        dx::XMFLOAT3 faceNormal;
+        dx::XMStoreFloat3(&faceNormal, normal);
 
-        // Accumulate normals to vertices
-        vertices[i0].normal.x += n.x;
-        vertices[i0].normal.y += n.y;
-        vertices[i0].normal.z += n.z;
+        float height = (originalVertices[i0].pos.y + originalVertices[i1].pos.y + originalVertices[i2].pos.y) / 3.0f;
 
-        vertices[i1].normal.x += n.x;
-        vertices[i1].normal.y += n.y;
-        vertices[i1].normal.z += n.z;
+        dx::XMFLOAT3 color;
+        if (height < 0.1f)         color = { 0.0f, 0.1f, 0.5f };   // Deep water
+        else if (height < 1.2f)    color = { 0.2f, 0.5f, 0.8f };   // Shore
+        else if (height < 5.5f)    color = { 0.1f, 0.6f, 0.2f };   // Grass
+        else if (height < 7.5f)    color = { 0.4f, 0.3f, 0.2f };   // Rock/mountain
+        else                      color = { 0.9f, 0.9f, 0.9f };   // Snow
 
-        vertices[i2].normal.x += n.x;
-        vertices[i2].normal.y += n.y;
-        vertices[i2].normal.z += n.z;
+        // Overwrite with new unique vertices and matching index
+        size_t newBase = i;
+        vertices[newBase + 0] = { originalVertices[i0].pos, faceNormal, color };
+        vertices[newBase + 1] = { originalVertices[i1].pos, faceNormal, color };
+        vertices[newBase + 2] = { originalVertices[i2].pos, faceNormal, color };
+
+        indices[newBase + 0] = static_cast<uint32_t>(newBase + 0);
+        indices[newBase + 1] = static_cast<uint32_t>(newBase + 1);
+        indices[newBase + 2] = static_cast<uint32_t>(newBase + 2);
     }
-    
+
 
 
     auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
@@ -103,9 +116,7 @@ Terrain::Terrain(Graphics& gfx)
         { "Color", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24u, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
-    vertexBuffer = std::make_unique<ComputeVertexBuffer>(gfx, vertices);
-
-    noiseProcessor = std::make_unique<NoiseProcessor>(gfx, vertices);
+    AddBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
     AddBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
 
@@ -128,57 +139,10 @@ Terrain::Terrain(Graphics& gfx)
 
 void Terrain::Update(float dt) noexcept
 {
-    angle += 0.01f;
-    //for (auto& v : vertices)
-    //{
-    //    float noise = FractalNoise(v.pos, noiseStrength, amp);
-    //    v.pos.y = noise;
-    //    v.normal = { 0.0f, 0.0f, 0.0f }; // Reset normals here
-    //}
-    //for (size_t i = 0; i < indices.size(); i += 3)
-    //{
-    //    uint32_t i0 = indices[i];
-    //    uint32_t i1 = indices[i + 1];
-    //    uint32_t i2 = indices[i + 2];
-    //    
-    //    dx::XMVECTOR p0 = dx::XMLoadFloat3(&vertices[i0].pos);
-    //    dx::XMVECTOR p1 = dx::XMLoadFloat3(&vertices[i1].pos);
-    //    dx::XMVECTOR p2 = dx::XMLoadFloat3(&vertices[i2].pos);
-
-    //   
-    //    
-
-
-
-    //    //vertex normals
-
-    //    dx::XMVECTOR v1 = dx::XMVectorSubtract(p1, p0);
-    //    dx::XMVECTOR v2 = dx::XMVectorSubtract(p2, p0);
-    //    dx::XMVECTOR normal = dx::XMVector3Cross(v1, v2);
-    //    normal = dx::XMVector3Normalize(normal);
-
-    //    dx::XMFLOAT3 n;
-    //    dx::XMStoreFloat3(&n, normal);
-
-    //    // Accumulate normals to vertices
-    //    vertices[i0].normal.x += n.x;
-    //    vertices[i0].normal.y += n.y;
-    //    vertices[i0].normal.z += n.z;
-
-    //    vertices[i1].normal.x += n.x;
-    //    vertices[i1].normal.y += n.y;
-    //    vertices[i1].normal.z += n.z;
-
-    //    vertices[i2].normal.x += n.x;
-    //    vertices[i2].normal.y += n.y;
-    //    vertices[i2].normal.z += n.z;
-    //}
 }
 
 void Terrain::Update(Graphics& gfx)noexcept {
-    angle += 0.006;
-    noiseProcessor->ApplyNoise(gfx,amp, frequency/10, 0.0f, 42.0f);
-   
+    angle += 0.006;  
 }
 
 DirectX::XMMATRIX Terrain::GetTransformXM() const noexcept

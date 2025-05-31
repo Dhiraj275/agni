@@ -35,6 +35,7 @@ App::App() :
 	}
 	DirectX::XMFLOAT3 materialColor = { cdist(rng), cdist(rng), cdist(rng) };
 	terrain = std::make_unique<Terrain>(window.Gfx());
+	//geoSphere = std::make_unique<GeoSphere>(window.Gfx(),0,0,0,2.0f);
 	window.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 500.0f));
 	
 }
@@ -62,9 +63,9 @@ void App::DoFrame()
 		drawable->Update(dt);
 		drawable->Draw(gfx);
 	}
-	terrain->Update(gfx);
+	
 	terrain->Draw(gfx);
-	terrain->SpawnControlWindow();
+	
 	bool opened = true;
 	ImGui::SetNextWindowSize(ImVec2(1280 / 6, 720 / 8));
 	ImGui::SetNextWindowPos(ImVec2(1280 - (1280 / 6),0.0f));

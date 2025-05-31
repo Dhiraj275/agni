@@ -74,8 +74,8 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
                 dx::XMFLOAT3 grassColor = { 0.2f, 0.7f, 0.3f }; // Green  
                 dx::XMFLOAT3 dirtColor = { 0.5f, 0.3f, 0.1f }; // Brown  
                 dx::XMFLOAT3 snowColor = { 1.0f, 1.0f, 1.0f }; // White 
-                const float waterLevel = radius * 0.95f;
-                const float grassLevel = radius * 1.00f;
+                const float waterLevel = radius * 0.65f;
+                const float grassLevel = radius * 0.70f;
                 const float dirtLevel = radius * 1.05f;
                 if (finalHeight < waterLevel)
                 {
@@ -97,7 +97,7 @@ GeoSphere::GeoSphere(Graphics& gfx, float x, float y, float z, float radius)
                     color = LerpColor(dirtColor, snowColor, std::min(t, 1.0f));
                 }
 
-                color = { noise,noise,noise };
+                //color = { 0.8f,0.8f,0.8f };
                 vertices.push_back({ point, normal, color });
 
                 uint32_t idx = static_cast<uint32_t>(vertices.size() - 1);
@@ -215,7 +215,7 @@ void GeoSphere::Update(float dt) noexcept
             float t = (finalHeight - dirtLevel) / (radius * 0.1f); // arbitrary snow transition
             color = LerpColor(dirtColor, snowColor, 1.0f);
         }
-        color = { noise,noise,noise };
+        //color = { noise,noise,noise };
 
         vertices[i].color = color;
     }

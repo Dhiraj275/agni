@@ -32,4 +32,6 @@ float4 main(float3 worldPos : Position, float3 n : Normal, float3 color : Color)
     
     // final color
     return float4(color * saturate(diffuse + ambient + specular), 1.0f);
+    
+    //return float4(color, 1.0f);
 }

@@ -37,11 +37,12 @@ private:
     std::vector<uint32_t> indices;
     std::vector<Vertex> vertices;
     std::unique_ptr<ComputeVertexBuffer> vertexBuffer;
+    DirectX::XMFLOAT3 noiseStrength = { 1,1,1};
     std::unique_ptr<NoiseProcessor> noiseProcessor;
     float frequency = 0;
-    float amp = 0;
+    float amp = 1.5f;
     float testValue = 0.0f;
-    int res = 100;
+    int res = 20;
     float angle = 0;
 };
 
